@@ -8,7 +8,8 @@ public class Sudoku
     {
 	Puzzle puzzle = new PuzzleGenerator().generate();
         System.out.println(puzzle);
-	Puzzle solution = new Solver(puzzle).solve();
+	Puzzle solution = new Solver().solve(puzzle);
 	System.out.println(solution);
+	new PuzzleEvaluator(puzzle).grade();
     }
 }

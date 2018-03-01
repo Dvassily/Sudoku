@@ -62,7 +62,5 @@ public class PuzzleGeneratorTest {
 	for (int i = 1; i <= Puzzle.sideLength; ++i) {
 	    assertTrue(values.contains(i));
 	}
-		
-	values.clear();
     }
 }

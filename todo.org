@@ -1,2 +1,4 @@
 ** Optimization
 * Generate with Las Vegas
+** Code quality :
+* Change constant name sideLength

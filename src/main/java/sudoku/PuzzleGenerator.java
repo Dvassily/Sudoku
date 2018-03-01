@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class PuzzleGenerator {
+    private static int totalHoles = 49;
+    
     public Puzzle generate() {
 	Puzzle puzzle = generateTerminalState();
 	digHoles(puzzle);
@@ -17,13 +19,13 @@ public class PuzzleGenerator {
     public Puzzle generateTerminalState() {
 	Puzzle puzzle = new Puzzle();
 	
-	return new Solver(puzzle).solve();
+	return new Solver().solve(puzzle);
     }
 
     public void digHoles(Puzzle puzzle) {
 	int holes = 0;
-
-	while (holes < 54) {
+	
+	while (holes < totalHoles) {
 	    int x = new Random().nextInt(Puzzle.sideLength);
 	    int y = new Random().nextInt(Puzzle.sideLength);
 
@@ -35,10 +37,8 @@ public class PuzzleGenerator {
 		for (int i = 1; i <= Puzzle.sideLength; ++i) {
 		    if (i != value) {
 			puzzle.setValue(x, y, i);
-			Puzzle solution = new Solver(puzzle).solve();
+			Puzzle solution = new Solver().solve(puzzle);
 			if (solution != null) {
-			    System.out.println(solution);
-
 			    ++solutions;
 			}
 		    }

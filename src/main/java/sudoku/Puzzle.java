@@ -2,6 +2,8 @@ package sudoku;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 public class Puzzle implements Cloneable {
     public static final int sideLength = 9;
@@ -34,19 +36,87 @@ public class Puzzle implements Cloneable {
 	content.get(y).set(x, value);
     }
 
-    public boolean check() {
-	boolean valid = true;
-	
-	for (List<Integer> row : content) {
-	    for (int i = 0; i < Puzzle.sideLength; ++i) {
-		for (int j = 0; j < Puzzle.sideLength; ++j) {
-		    if (i != j) {
-			valid &= row.get(i) == 0 || row.get(i) != row.get(j);
-		    }
+    public boolean isCompleted() {
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+		if (getCell(i, j) == 0) {
+		    return false;
 		}
 	    }
 	}
+
+	return true;
     }
+
+    public boolean checkConstraints() {
+	Set<Integer> values = new HashSet<>();
+
+	int numberOfSquares = 3;
+
+	for (int squareX = 0; squareX < numberOfSquares; ++squareX) {
+	    for (int squareY = 0; squareY < numberOfSquares; ++squareY) {
+		if (! checkSquare(squareX, squareY)) {
+		    return false;
+		}
+	    }
+	}
+	
+
+	for (int i = 0; i < Puzzle.sideLength; i++) {
+	    for (int j = 0; j < Puzzle.sideLength; j++) {
+		int value = content.get(i).get(j);
+
+		if (value != 0) {
+		    if (values.contains(value)) {
+			return false;
+		    }
+
+		    values.add(value);
+		}
+	    }
+
+	    values.clear();
+	}
+
+	for (int i = 0; i < Puzzle.sideLength; i++) {
+	    for (int j = 0; j < Puzzle.sideLength; j++) {
+		int value = content.get(j).get(i);
+
+		if (value != 0) {
+		    if (values.contains(value)) {
+			return false;
+		    }
+
+		    values.add(value);
+		}
+	    }
+
+	    values.clear();
+	}
+
+	return true;
+    }
+
+    private boolean checkSquare(int squareX, int squareY) {
+	Set<Integer> values = new HashSet<>();
+	
+	for (int i = squareX * 3; i < squareX * 3 + 3; ++i) {
+	    for (int j = squareY * 3; j < squareY * 3 + 3; ++j) {
+		int value = getCell(i, j);
+
+		if (value != 0) {
+		    if (values.contains(value)) {
+			return false;
+		    }
+
+		    values.add(value);
+		}
+	    }
+	}
+
+	return true;
+    }
+	
 
     public Object clone() {
 	Puzzle puzzle = null;

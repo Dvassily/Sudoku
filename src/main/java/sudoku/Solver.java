@@ -8,17 +8,9 @@ import java.util.Random;
 import java.util.Comparator;
 import java.util.Collections;
 
-public class Solver {
-    private Puzzle puzzle;
-    
-    public Solver(Puzzle puzzle) {
-	this.puzzle = puzzle;
-    }
-    
-    // TODO: Use recursivity
-    //public List<Puzzle> solve(boolean findAllSolutions) {
-    public Puzzle solve() {
-	if (! puzzle.check()) {
+public class Solver implements ISolver {
+    public Puzzle solve(Puzzle puzzle) {
+	if (! puzzle.checkConstraints()) {
 	    return null;
 	}
 	//List<Puzzle> solutions = new ArrayList<>();
@@ -38,15 +30,10 @@ public class Solver {
 	    }
 	}
 	
-	List<Integer> candidates = findCandidates(puzzle, x, y);
+	List<Integer> candidates = new ArrayList<>(findCandidates(puzzle, x, y));
 
 	Collections.shuffle(candidates);
 	for (int candidate : candidates) {
-	    // solutions.addAll(fill(x, y, candidate, (Puzzle) puzzle.clone(), findAllSolutions));
-
-	    // if (solutions.size() == 1 && ! findAllSolutions) {
-	    // 	return solutions;
-	    // }
 	    solution = fill(x, y, candidate, (Puzzle) puzzle.clone());
 	    if (solution != null) {
 		return solution;
@@ -55,7 +42,7 @@ public class Solver {
 
 	return null;
     }
-
+    
     public Puzzle fill(int x, int y, int value, Puzzle puzzle) {
 	puzzle.setValue(x, y, value);
 
@@ -69,18 +56,12 @@ public class Solver {
 	
 	if (y == Puzzle.sideLength) {
 	    return puzzle;
-	    // solutions.add(puzzle);
-	    // return solutions;
 	}
 
-	List<Integer> candidates = findCandidates(puzzle, x, y);
+	List<Integer> candidates = new ArrayList<>(findCandidates(puzzle, x, y));
 
 	Collections.shuffle(candidates);
 	for (int candidate : candidates) {
-	    // solutions.addAll(fill(x, y, candidate, (Puzzle) puzzle.clone(), findAllSolutions));
-	    // if (solutions.size() == 1 && ! findAllSolutions) {
-	    // 	return solutions;
-	    // }
 	    Puzzle solution = fill(x, y, candidate, (Puzzle) puzzle.clone());
 	    if (solution != null) {
 		return solution;
@@ -90,7 +71,8 @@ public class Solver {
 	return null;
     }
 
-    private List<Integer> findCandidates(Puzzle puzzle, int x, int y) {
+    // TODO: Move to util?
+    public static Set<Integer> findCandidates(Puzzle puzzle, int x, int y) {
 	Set<Integer> candidates = new HashSet<Integer>();
 
 	for (int i = 1; i <= Puzzle.sideLength; ++i) {
@@ -111,9 +93,9 @@ public class Solver {
 	}
 
 	for (int i = 0; i < Puzzle.sideLength; i++) {
-		candidates.remove(puzzle.getCell(x, i));
+	    candidates.remove(puzzle.getCell(x, i));
 	}
 
-	return new ArrayList<Integer>(candidates);
+	return candidates;
     }
 }
