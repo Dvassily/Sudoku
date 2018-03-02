@@ -18,12 +18,22 @@ public class HumanLikeSolver {
 		    int value = cellCandidates.iterator().next();
 		    puzzle.setValue(j, i, value);
 		    candidates.update(puzzle, j, i, value);
-		    //System.out.println(candidates);
-		    //System.out.println(puzzle);
+		    System.out.println(candidates);
+		    System.out.println(puzzle);
 		}
 	    }
 	}
 
 	return found;
+    }
+
+    public boolean searchNakedSets(Puzzle puzzle, CandidateList candidates) {
+	return false;
+	// List<>
+	// for (int i = 0; i < Puzzle.sideLength; ++i) {
+	//     for (int j = 0; j < Puzzle.sideLength; ++j) {
+		
+	//     }
+	// }
     }
 }

@@ -18,7 +18,7 @@ public class Solver implements ISolver {
 	int x = 0;
 	int y = 0;
 
-	while (puzzle.getCell(x, y) > 0) {
+	while (puzzle.getCell(x, y).isFilled()) {
 	    ++x;
 	    if (x == Puzzle.sideLength) {
 		++y;
@@ -36,8 +36,11 @@ public class Solver implements ISolver {
 	for (int candidate : candidates) {
 	    solution = fill(x, y, candidate, (Puzzle) puzzle.clone());
 	    if (solution != null) {
+		// System.out.println("foo:");
+		// System.out.println(solution);
 		return solution;
 	    }
+
 	}
 
 	return null;
@@ -46,7 +49,7 @@ public class Solver implements ISolver {
     public Puzzle fill(int x, int y, int value, Puzzle puzzle) {
 	puzzle.setValue(x, y, value);
 
-	while (y < Puzzle.sideLength && puzzle.getCell(x, y) > 0) {
+	while (y < Puzzle.sideLength && puzzle.getCell(x, y).isFilled()) {
 	    ++x;
 	    if (x == Puzzle.sideLength) {
 		++y;
@@ -84,16 +87,16 @@ public class Solver implements ISolver {
 
 	for (int i = squareX * Puzzle.regionSize; i < squareX * Puzzle.regionSize + Puzzle.regionSize; ++i) {
 	    for (int j = squareY * Puzzle.regionSize; j < squareY * Puzzle.regionSize + Puzzle.regionSize; ++j) {
-		candidates.remove(puzzle.getCell(i, j));
+		candidates.remove(puzzle.getCell(i, j).getValue());
 	    }
 	}
 
 	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    candidates.remove(puzzle.getCell(i, y));
+	    candidates.remove(puzzle.getCell(i, y).getValue());
 	}
 
 	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    candidates.remove(puzzle.getCell(x, i));
+	    candidates.remove(puzzle.getCell(x, i).getValue());
 	}
 
 	return candidates;

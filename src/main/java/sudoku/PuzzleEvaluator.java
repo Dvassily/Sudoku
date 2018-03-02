@@ -11,10 +11,16 @@ public class PuzzleEvaluator {
     
     public void grade() {
 	CandidateList candidates = new CandidateList(puzzle);
-
-	while (solver.searchSingleCandidates(puzzle, candidates)) {
+	boolean updated;
+	
+	do {
+	    updated = false;
+	    
+	    updated |= solver.searchSingleCandidates(puzzle, candidates);
+	    updated |= solver.searchNakedSets(puzzle, candidates);
+	    
 	    System.out.print("s");
-	}
+	} while (updated);
 
 	System.out.println();
 	System.out.println(puzzle);

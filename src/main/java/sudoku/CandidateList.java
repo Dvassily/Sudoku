@@ -19,7 +19,7 @@ public class CandidateList {
 	    candidates.add(new ArrayList<Set<Integer>>());
 	    for (int j = 0; j < Puzzle.sideLength; ++j) {
 		candidates.get(i).add(new HashSet<Integer>());
-		if (puzzle.getCell(j, i) == 0) {
+		if (! puzzle.getCell(j, i).isFilled()) {
 		    candidates.get(i).get(j).addAll(Solver.findCandidates(puzzle, j, i));
 		}
 	    }

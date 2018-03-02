@@ -29,7 +29,7 @@ public class PuzzleGenerator {
 	    int x = new Random().nextInt(Puzzle.sideLength);
 	    int y = new Random().nextInt(Puzzle.sideLength);
 
-	    int value = puzzle.getCell(x, y);
+	    int value = puzzle.getCell(x, y).getValue();
 	    
 	    if (value > 0) {
 		int solutions = 1;
