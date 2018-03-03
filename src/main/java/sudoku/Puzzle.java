@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public class Puzzle implements Cloneable {
     public static final int sideLength = 9;
-    public static final int regionSize = 3;
+    public static final int blockSize = 3;
     
     private List<List<Cell>> content;
 
@@ -18,17 +18,16 @@ public class Puzzle implements Cloneable {
 	    content.add(new ArrayList<Cell>());
 	    
 	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		content.get(i).add(new Cell(j, i, 0));
+		Cell cell = new Cell(j, i, 0);
+		content.get(i).add(cell);
 	    }
 	}
+
+	updateCandidates();
     }
 
     public Cell getCell(int x, int y) {
 	return content.get(y).get(x);
-    }
-
-    public void setValue(int x, int y, int value) {
-	content.get(y).get(x).setValue(value);
     }
 
     public boolean isCompleted() {
@@ -43,75 +42,70 @@ public class Puzzle implements Cloneable {
 	return true;
     }
 
-    public boolean checkConstraints() {
-	Set<Integer> values = new HashSet<>();
-
-	int numberOfSquares = 3;
-
-	for (int squareX = 0; squareX < numberOfSquares; ++squareX) {
-	    for (int squareY = 0; squareY < numberOfSquares; ++squareY) {
-		if (! checkSquare(squareX, squareY)) {
-		    return false;
-		}
-	    }
-	}
-	
-
-	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    for (int j = 0; j < Puzzle.sideLength; j++) {
-		int value = content.get(i).get(j).getValue();
-
-		if (value != 0) {
-		    if (values.contains(value)) {
-			return false;
-		    }
-
-		    values.add(value);
-		}
-	    }
-
-	    values.clear();
-	}
-
-	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    for (int j = 0; j < Puzzle.sideLength; j++) {
-		int value = content.get(j).get(i).getValue();
-
-		if (value != 0) {
-		    if (values.contains(value)) {
-			return false;
-		    }
-
-		    values.add(value);
-		}
-	    }
-
-	    values.clear();
-	}
-
-	return true;
+    public void setValue(int x, int y, int value) {
+	getCell(x, y).setValue(value);
     }
 
-    private boolean checkSquare(int squareX, int squareY) {
-	Set<Integer> values = new HashSet<>();
-	
-	for (int i = squareX * 3; i < squareX * 3 + 3; ++i) {
-	    for (int j = squareY * 3; j < squareY * 3 + 3; ++j) {
-		int value = getCell(i, j).getValue();
+    public void updateCandidates() {
+	for (int y = 0; y < Puzzle.sideLength; ++y) {
+	    for (int x = 0; x < Puzzle.sideLength; ++x) {
+		Cell cell = getCell(x, y);
+		cell.getCandidates().clear();
+		    
+		for (int candidate : findCandidates(x, y)) {
+		    cell.addToCandidates(candidate);
+		}
+	    }
+	}
+    }
 
-		if (value != 0) {
-		    if (values.contains(value)) {
-			return false;
-		    }
+    public Set<Cell> findCellsInRegion(int x, int y) {
+	Set<Cell> cells = new HashSet<>();
 
-		    values.add(value);
+	int squareX = x / Puzzle.blockSize;
+	int squareY = y / Puzzle.blockSize;
+
+	for (int i = squareY * Puzzle.blockSize; i < squareY * Puzzle.blockSize + Puzzle.blockSize; ++i) {
+	    for (int j = squareX * Puzzle.blockSize; j < squareX * Puzzle.blockSize + Puzzle.blockSize; ++j) {
+		if (i != y && j != x) {
+		    cells.add(getCell(j, i));
 		}
 	    }
 	}
 
-	return true;
+	for (int i = 0; i < Puzzle.sideLength; i++) {
+	    if (i != x) {
+		cells.add(getCell(i, y));
+	    }
+	}
+
+	for (int i = 0; i < Puzzle.sideLength; i++) {
+	    if (i != y) {
+		cells.add(getCell(x, i));
+	    }
+	}
+
+	return cells;
     }
+
+    public Set<Integer> findCandidates(int x, int y) {
+	Set<Integer> candidates = new HashSet<Integer>();
+
+	if (getCell(x, y).isFilled()) {
+	    return candidates;
+	}
 	
+	for (int i = 1; i <= Puzzle.sideLength; ++i) {
+	    candidates.add(i);
+	}
+
+	for (Cell cell : findCellsInRegion(x, y)) {
+	    candidates.remove(cell.getValue());
+	}
+	
+	return candidates;
+    }
+
 
     public Object clone() {
 	Puzzle puzzle = null;
@@ -161,7 +155,18 @@ public class Puzzle implements Cloneable {
 	return result;
     }
 
-    public static void main(String[] args) {
-	System.out.println("foo");
+    public void printCandidates() {
+	String result = "";
+
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+		result += getCell(j, i).getCandidates() + " ";
+	    }
+	    
+	    result += "\n";
+	}
+
+	System.out.println(result);
+
     }
 }

@@ -10,9 +10,10 @@ import java.util.Collections;
 
 public class Solver implements ISolver {
     public Puzzle solve(Puzzle puzzle) {
-	if (! puzzle.checkConstraints()) {
+	if (! new ConstraintChecker().check(puzzle)) {
 	    return null;
 	}
+
 	//List<Puzzle> solutions = new ArrayList<>();
 	Puzzle solution = null;
 	int x = 0;
@@ -29,15 +30,13 @@ public class Solver implements ISolver {
 		}
 	    }
 	}
-	
-	List<Integer> candidates = new ArrayList<>(findCandidates(puzzle, x, y));
+
+	List<Integer> candidates = new ArrayList<>(puzzle.getCell(x, y).getCandidates());
 
 	Collections.shuffle(candidates);
 	for (int candidate : candidates) {
 	    solution = fill(x, y, candidate, (Puzzle) puzzle.clone());
 	    if (solution != null) {
-		// System.out.println("foo:");
-		// System.out.println(solution);
 		return solution;
 	    }
 
@@ -48,7 +47,7 @@ public class Solver implements ISolver {
     
     public Puzzle fill(int x, int y, int value, Puzzle puzzle) {
 	puzzle.setValue(x, y, value);
-
+	
 	while (y < Puzzle.sideLength && puzzle.getCell(x, y).isFilled()) {
 	    ++x;
 	    if (x == Puzzle.sideLength) {
@@ -61,7 +60,7 @@ public class Solver implements ISolver {
 	    return puzzle;
 	}
 
-	List<Integer> candidates = new ArrayList<>(findCandidates(puzzle, x, y));
+	List<Integer> candidates = new ArrayList<>(puzzle.findCandidates(x, y));
 
 	Collections.shuffle(candidates);
 	for (int candidate : candidates) {
@@ -74,31 +73,5 @@ public class Solver implements ISolver {
 	return null;
     }
 
-    // TODO: Move to util?
-    public static Set<Integer> findCandidates(Puzzle puzzle, int x, int y) {
-	Set<Integer> candidates = new HashSet<Integer>();
-
-	for (int i = 1; i <= Puzzle.sideLength; ++i) {
-	    candidates.add(i);
-	}
-
-	int squareX = x / Puzzle.regionSize;
-	int squareY = y / Puzzle.regionSize;
-
-	for (int i = squareX * Puzzle.regionSize; i < squareX * Puzzle.regionSize + Puzzle.regionSize; ++i) {
-	    for (int j = squareY * Puzzle.regionSize; j < squareY * Puzzle.regionSize + Puzzle.regionSize; ++j) {
-		candidates.remove(puzzle.getCell(i, j).getValue());
-	    }
-	}
-
-	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    candidates.remove(puzzle.getCell(i, y).getValue());
-	}
-
-	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    candidates.remove(puzzle.getCell(x, i).getValue());
-	}
-
-	return candidates;
-    }
+    // TODO: Move to helper/Puzzle class?
 }

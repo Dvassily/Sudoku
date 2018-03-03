@@ -2,25 +2,18 @@ package sudoku;
 
 import java.util.Set;
 import java.util.HashSet;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class PuzzleGeneratorTest {
-    private static final int numberOfSquares = 3;
-    private static final int numberOfPuzzles = 100;
-
-    // TODO: Redo tests
-    @Test
-    public void testGenerate() {
-	Puzzle puzzle = new PuzzleGenerator().generate();
-	
+public class ConstraintChecker {
+    public boolean check(Puzzle puzzle) {
 	Set<Integer> values = new HashSet<>();
-	
+
 	int numberOfSquares = 3;
 
 	for (int squareX = 0; squareX < numberOfSquares; ++squareX) {
 	    for (int squareY = 0; squareY < numberOfSquares; ++squareY) {
-		checkSquare(puzzle, squareX, squareY);
+		if (! checkSquare(puzzle, squareX, squareY)) {
+		    return false;
+		}
 	    }
 	}
 	
@@ -30,7 +23,10 @@ public class PuzzleGeneratorTest {
 		int value = puzzle.getCell(j, i).getValue();
 
 		if (value != 0) {
-		    assertFalse(values.contains(value));
+		    if (values.contains(value)) {
+			return false;
+		    }
+
 		    values.add(value);
 		}
 	    }
@@ -43,7 +39,10 @@ public class PuzzleGeneratorTest {
 		int value = puzzle.getCell(i, j).getValue();
 
 		if (value != 0) {
-		    assertFalse(values.contains(value));
+		    if (values.contains(value)) {
+			return false;
+		    }
+
 		    values.add(value);
 		}
 	    }
@@ -51,6 +50,7 @@ public class PuzzleGeneratorTest {
 	    values.clear();
 	}
 
+	return true;
     }
 
     private boolean checkSquare(Puzzle puzzle, int squareX, int squareY) {
@@ -58,10 +58,13 @@ public class PuzzleGeneratorTest {
 	
 	for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {
 	    for (int j = squareX * 3; j < squareX * 3 + 3; ++j) {
-		int value = puzzle.getCell(j, i).getValue();
+		int value = puzzle.getCell(i, j).getValue();
 
 		if (value != 0) {
-		    assertFalse(values.contains(value));
+		    if (values.contains(value)) {
+			return false;
+		    }
+
 		    values.add(value);
 		}
 	    }
@@ -69,4 +72,5 @@ public class PuzzleGeneratorTest {
 
 	return true;
     }
+
 }

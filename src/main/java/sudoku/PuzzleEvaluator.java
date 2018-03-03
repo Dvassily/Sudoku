@@ -10,14 +10,20 @@ public class PuzzleEvaluator {
     }
     
     public void grade() {
-	CandidateList candidates = new CandidateList(puzzle);
+	puzzle.updateCandidates();
+	
 	boolean updated;
 	
 	do {
 	    updated = false;
-	    
-	    updated |= solver.searchSingleCandidates(puzzle, candidates);
-	    updated |= solver.searchNakedSets(puzzle, candidates);
+
+	    while (solver.processSingleCandidates(puzzle)) {
+		updated = true;
+	    }
+
+	    while (solver.processNakedSets(puzzle)) {
+		updated = true;
+	    }
 	    
 	    System.out.print("s");
 	} while (updated);

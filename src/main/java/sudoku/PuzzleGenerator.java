@@ -11,6 +11,7 @@ public class PuzzleGenerator {
     
     public Puzzle generate() {
 	Puzzle puzzle = generateTerminalState();
+
 	digHoles(puzzle);
 	
 	return puzzle;
@@ -30,13 +31,15 @@ public class PuzzleGenerator {
 	    int y = new Random().nextInt(Puzzle.sideLength);
 
 	    int value = puzzle.getCell(x, y).getValue();
-	    
+
 	    if (value > 0) {
 		int solutions = 1;
-		
-		for (int i = 1; i <= Puzzle.sideLength; ++i) {
+
+		// TODO: Prevent compute all solutions
+		for (int i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
 		    if (i != value) {
 			puzzle.setValue(x, y, i);
+			
 			Puzzle solution = new Solver().solve(puzzle);
 			if (solution != null) {
 			    ++solutions;
@@ -51,6 +54,7 @@ public class PuzzleGenerator {
 		    puzzle.setValue(x, y, value);
 		}
 	    }
+
 	}
     }
 }
