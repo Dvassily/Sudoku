@@ -7,6 +7,7 @@ public class ConstraintChecker {
     public boolean check(Puzzle puzzle) {
 	Set<Integer> values = new HashSet<>();
 
+	// TODO: Change name
 	int numberOfSquares = 3;
 
 	for (int squareX = 0; squareX < numberOfSquares; ++squareX) {

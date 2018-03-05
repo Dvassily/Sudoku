@@ -38,41 +38,70 @@ public class HumanLikeSolver {
 		}
 	    }
 
-	    Set<Set<Cell>> subsets = powerSet(cells);
-	    for (Set<Cell> subset : subsets) {
-		if (subset.size() > 1 && subset.size() <= 4) {
-		    System.out.println(subset);
-
-		    Set<Integer> candidates = new HashSet<>();
-		    for (Cell cell : subset) {
-			candidates.addAll(cell.getCandidates());
-		    }
-
-		    if (subset.size() == candidates.size()) {
-			System.out.println("Naked set : " + subset);
-		    }
-
-		
-		    candidates.clear();
-		}
-	    }
+	    processNakedSets(cells);
+	    
 	    cells.clear();
 	}
 
+	// Looks for naked sets in columns
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+		Cell cell = puzzle.getCell(i, j);
+		if (! cell.isFilled()) {
+		    cells.add(cell);
+		}
+	    }
 
-	// Set<Integer> candidates = new HashSet<>();
-	// for (Set<Cell> subset : subsets) {
-	//     for (Cell cell : subset) {
-	// 	candidates.addAll(cell.getCandidates());
-	//     }
+	    processNakedSets(cells);
+	    
+	    cells.clear();
+	}
 
+	// TODO: Add constant
+	for (int squareX = 0; squareX < 3; ++squareX) {
+	    for (int squareY = 0; squareY < 3; ++squareY) {
+		for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {
+		    for (int j = squareX * 3; j < squareX * 3 + 3; ++j) {
+			Cell cell = puzzle.getCell(j, i);
+			if (! cell.isFilled()) {
+			    cells.add(cell);
+			}
+		    }
+		}
 		
-	//     candidates.clear();
-	// }
+		processNakedSets(cells);
+		
+		cells.clear();
+	    }
+	}
 
 	return false;
     }
 
+    private void processNakedSets(Set<Cell> cells) {
+	Set<Set<Cell>> subsets = powerSet(cells);
+
+	for (Set<Cell> subset : subsets) {
+	    if (subset.size() > 1 && subset.size() <= 4) {
+		Set<Integer> candidates = new HashSet<>();
+		for (Cell cell : subset) {
+		    candidates.addAll(cell.getCandidates());
+		}
+
+		if (subset.size() == candidates.size()) {
+		    for (Cell cell : cells) {
+			if (! subset.contains(cell)) {
+			    for (int candidate : candidates) {
+				cell.removeFromCandidates(candidate);
+			    }
+			}
+		    }
+		}
+
+		candidates.clear();
+	    }
+	}
+    }
 
     private void removeCandidates(Puzzle puzzle, int x, int y, int value) {
 	Set<Cell> cellsInRegion = new HashSet<>();

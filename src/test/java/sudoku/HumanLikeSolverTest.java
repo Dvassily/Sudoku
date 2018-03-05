@@ -118,7 +118,7 @@ public class HumanLikeSolverTest {
 	new HumanLikeSolver().processNakedSets(puzzle);
 
 	// Asserts candidates 1 and 6 are removed from cells [3,0], [4,0], [5, 0] and [0, 2],
-	//                and 7 and 6 from cells [0, 2] and [4, 2]
+	//                and 7 and 6 from cell [0, 2]
 	
 	candidates = puzzle.getCell(3, 0).getCandidates();
 	assertTrue(candidates.contains(2));
@@ -139,12 +139,6 @@ public class HumanLikeSolverTest {
 
 	candidates = puzzle.getCell(0, 2).getCandidates();
 	assertTrue(candidates.contains(8));
-	assertEquals(3, candidates.size());
-
-	candidates = puzzle.getCell(4, 2).getCandidates();
-	assertTrue(candidates.contains(1));
-	assertTrue(candidates.contains(8));
-	assertEquals(4, candidates.size());
-
+	assertEquals(1, candidates.size());
     }
 }
