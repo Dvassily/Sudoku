@@ -25,36 +25,38 @@ public class PuzzleGenerator {
 
     public void digHoles(Puzzle puzzle) {
 	int holes = 0;
+	Set<Cell> tried = new HashSet<>();
 	
 	while (holes < totalHoles) {
-	    int x = new Random().nextInt(Puzzle.sideLength);
-	    int y = new Random().nextInt(Puzzle.sideLength);
+	    Cell cell = puzzle.getCell(new Random().nextInt(Puzzle.sideLength), new Random().nextInt(Puzzle.sideLength));
+	    
+	    while (tried.contains(cell)) {
+		cell = puzzle.getCell(new Random().nextInt(Puzzle.sideLength), new Random().nextInt(Puzzle.sideLength));
+	    }
 
-	    int value = puzzle.getCell(x, y).getValue();
 
-	    if (value > 0) {
-		int solutions = 1;
+	    int value = cell.getValue();
 
-		// TODO: Prevent compute all solutions
-		for (int i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
-		    if (i != value) {
-			puzzle.setValue(x, y, i);
+	    int solutions = 1;
+	    for (int i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
+		if (i != value) {
+		    cell.setValue(i);
 			
-			Puzzle solution = new Solver().solve(puzzle);
-			if (solution != null) {
-			    ++solutions;
-			}
+		    Puzzle solution = new Solver().solve(puzzle);
+		    if (solution != null) {
+			++solutions;
 		    }
-		}
-
-		if (solutions == 1) {
-		    ++holes;
-		    puzzle.setValue(x, y, 0);
-		} else {
-		    puzzle.setValue(x, y, value);
 		}
 	    }
 
+	    if (solutions == 1) {
+		++holes;
+		cell.setValue(0);
+	    } else {
+		cell.setValue(value);
+	    }
+
+	    tried.add(cell);
 	}
     }
 }

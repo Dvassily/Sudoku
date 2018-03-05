@@ -40,7 +40,9 @@ public class HumanLikeSolver {
 
 	    Set<Set<Cell>> subsets = powerSet(cells);
 	    for (Set<Cell> subset : subsets) {
-		if (subset.size() > 1 && subsets.size() <= 4) {
+		if (subset.size() > 1 && subset.size() <= 4) {
+		    System.out.println(subset);
+
 		    Set<Integer> candidates = new HashSet<>();
 		    for (Cell cell : subset) {
 			candidates.addAll(cell.getCandidates());
