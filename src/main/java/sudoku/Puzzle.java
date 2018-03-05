@@ -158,9 +158,19 @@ public class Puzzle implements Cloneable {
     public void printCandidates() {
 	String result = "";
 
+	int min = 0;
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
 	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		result += getCell(j, i).getCandidates() + " ";
+		String candidates = getCell(j, i).getCandidates().toString();
+		if (min == 0 || candidates.length() > min) {
+		    min = candidates.length();
+		}
+	    }
+	}
+	
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+		result += String.format("%" + min + "s ", getCell(j, i).getCandidates().toString());
 	    }
 	    
 	    result += "\n";

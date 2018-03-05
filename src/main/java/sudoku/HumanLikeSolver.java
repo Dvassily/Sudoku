@@ -27,6 +27,10 @@ public class HumanLikeSolver {
     }
 
     public boolean processNakedSets(Puzzle puzzle) {
+	System.out.println(puzzle);
+
+	puzzle.printCandidates();
+
 	Set<Cell> cells = new HashSet<>();
 
 	// Looks for naked sets in rows
@@ -38,23 +42,41 @@ public class HumanLikeSolver {
 		}
 	    }
 
-	    Set<Set<Cell>> subsets = powerSet(cells);
-	    for (Set<Cell> subset : subsets) {
-		if (subset.size() > 1 && subsets.size() <= 4) {
-		    Set<Integer> candidates = new HashSet<>();
-		    for (Cell cell : subset) {
-			candidates.addAll(cell.getCandidates());
-		    }
+	    processNakedSets(cells);
+	    
+	    cells.clear();
+	}
 
-		    if (subset.size() == candidates.size()) {
-			System.out.println("Naked set : " + subset);
-		    }
-
-		
-		    candidates.clear();
+	// Looks for naked sets in columns
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+		Cell cell = puzzle.getCell(i, j);
+		if (! cell.isFilled()) {
+		    cells.add(cell);
 		}
 	    }
+
+	    processNakedSets(cells);
+	    
 	    cells.clear();
+	}
+
+	// TODO: Add constant
+	for (int squareX = 0; squareX < 3; ++squareX) {
+	    for (int squareY = 0; squareY < 3; ++squareY) {
+		for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {
+		    for (int j = squareX * 3; j < squareX * 3 + 3; ++j) {
+			Cell cell = puzzle.getCell(j, i);
+			if (! cell.isFilled()) {
+			    cells.add(cell);
+			}
+		    }
+
+		    processNakedSets(cells);
+
+		    cells.clear();
+		}
+	    }
 	}
 
 
@@ -71,6 +93,37 @@ public class HumanLikeSolver {
 	return false;
     }
 
+    private void processNakedSets(Set<Cell> cells) {
+	System.out.println(cells);
+	
+	Set<Set<Cell>> subsets = powerSet(cells);
+
+	for (Set<Cell> subset : subsets) {
+	    if (subset.size() > 1 && subsets.size() <= 4) {
+		Set<Integer> candidates = new HashSet<>();
+		for (Cell cell : subset) {
+		    candidates.addAll(cell.getCandidates());
+		}
+
+		if (subset.size() == candidates.size()) {
+		    System.out.println("Naked set : " + subset);
+
+		    for (Cell cell : cells) {
+			System.out.println(cell.getCandidates());
+
+			if (! subset.contains(cell)) {
+			    for (int candidate : candidates) {
+				System.out.println("remove");
+				cell.removeFromCandidates(candidate);
+			    }
+			}
+		    }
+		}
+
+		candidates.clear();
+	    }
+	}
+    }
 
     private void removeCandidates(Puzzle puzzle, int x, int y, int value) {
 	Set<Cell> cellsInRegion = new HashSet<>();
