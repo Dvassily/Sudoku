@@ -8,6 +8,7 @@ import java.util.HashSet;
 public class Puzzle implements Cloneable {
     public static final int sideLength = 9;
     public static final int blockSize = 3;
+    public static final int NUMBER_OF_CELLS = 81;
     
     private List<List<Cell>> content;
 

@@ -39,8 +39,8 @@ public class Cell implements Cloneable {
 	candidates.add(value);
     }
 
-    public void removeFromCandidates(int value) {
-	candidates.remove(value);
+    public boolean removeFromCandidates(int value) {
+	return candidates.remove(value);
     }
 
     public Set<Integer> getCandidates() {

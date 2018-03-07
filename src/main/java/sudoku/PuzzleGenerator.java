@@ -7,12 +7,10 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class PuzzleGenerator {
-    private static int totalHoles = 49;
-    
-    public Puzzle generate() {
+    public Puzzle generate(int hints) {
 	Puzzle puzzle = generateTerminalState();
 
-	digHoles(puzzle);
+	digHoles(puzzle, Puzzle.NUMBER_OF_CELLS - hints);
 	
 	return puzzle;
     }
@@ -23,11 +21,11 @@ public class PuzzleGenerator {
 	return new Solver().solve(puzzle);
     }
 
-    public void digHoles(Puzzle puzzle) {
+    public void digHoles(Puzzle puzzle, int numberOfHoles) {
 	int holes = 0;
 	Set<Cell> tried = new HashSet<>();
 	
-	while (holes < totalHoles) {
+	while (holes < numberOfHoles) {
 	    Cell cell = puzzle.getCell(new Random().nextInt(Puzzle.sideLength), new Random().nextInt(Puzzle.sideLength));
 	    
 	    while (tried.contains(cell)) {
