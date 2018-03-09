@@ -7,12 +7,12 @@ import static org.junit.Assert.*;
 
 public class PuzzleGeneratorTest {
     private static final int numberOfSquares = 3;
-    private static final int numberOfHoles = 49;
+    private static final double holesPropotion = 0.60;
 
     // TODO: Redo tests
     @Test
     public void testGenerate() {
-	Puzzle puzzle = new PuzzleGenerator().generate(numberOfHoles);
+	Puzzle puzzle = new PuzzleGenerator().generate(holesPropotion);
 	
 	Set<Integer> values = new HashSet<>();
 	

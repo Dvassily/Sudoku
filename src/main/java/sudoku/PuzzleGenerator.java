@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class PuzzleGenerator {
-    public Puzzle generate(int hints) {
+    public Puzzle generate(double holesProportion) {
 	Puzzle puzzle = generateTerminalState();
 
-	digHoles(puzzle, Puzzle.NUMBER_OF_CELLS - hints);
+	digHoles(puzzle, holesProportion);
 	
 	return puzzle;
     }
@@ -21,40 +21,39 @@ public class PuzzleGenerator {
 	return new Solver().solve(puzzle);
     }
 
-    public void digHoles(Puzzle puzzle, int numberOfHoles) {
+    public void digHoles(Puzzle puzzle, double holesProportion) {
 	int holes = 0;
-	Set<Cell> tried = new HashSet<>();
-	
-	while (holes < numberOfHoles) {
-	    Cell cell = puzzle.getCell(new Random().nextInt(Puzzle.sideLength), new Random().nextInt(Puzzle.sideLength));
-	    
-	    while (tried.contains(cell)) {
-		cell = puzzle.getCell(new Random().nextInt(Puzzle.sideLength), new Random().nextInt(Puzzle.sideLength));
-	    }
 
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+		if (new Random().nextDouble() < holesProportion) {
+		    Cell cell = puzzle.getCell(j, i);
 
-	    int value = cell.getValue();
-
-	    int solutions = 1;
-	    for (int i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
-		if (i != value) {
-		    cell.setValue(i);
-			
-		    Puzzle solution = new Solver().solve(puzzle);
-		    if (solution != null) {
-			++solutions;
+		    if (checkUniqueSolution(puzzle, cell)) {
+			cell.setValue(0);
+		    } else {
+			cell.setValue(cell.getValue());
 		    }
 		}
 	    }
-
-	    if (solutions == 1) {
-		++holes;
-		cell.setValue(0);
-	    } else {
-		cell.setValue(value);
-	    }
-
-	    tried.add(cell);
 	}
+    }
+
+    public boolean checkUniqueSolution(Puzzle puzzle, Cell cell) {
+	int value = cell.getValue();
+
+	int solutions = 1;
+	for (int i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
+	    if (i != value) {
+		cell.setValue(i);
+			
+		Puzzle solution = new Solver().solve(puzzle);
+		if (solution != null) {
+		    ++solutions;
+		}
+	    }
+	}
+
+	return (solutions == 1);
     }
 }

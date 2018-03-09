@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 import static sudoku.Strategy.*;
 
@@ -43,52 +45,21 @@ public class HumanLikeSolver {
     }
 
     public boolean processNakedSets(Puzzle puzzle) {
-	Set<Cell> cells = new HashSet<>();
 	boolean found = false;
 	
 	// Looks for naked sets in rows
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		Cell cell = puzzle.getCell(j, i);
-		if (! cell.isFilled()) {
-		    cells.add(cell);
-		}
-	    }
-
-	    found |= processNakedSets(cells);
-	    
-	    cells.clear();
+	    found |= processNakedSets(puzzle.findRow(i, true));
 	}
 
 	// Looks for naked sets in columns
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		Cell cell = puzzle.getCell(i, j);
-		if (! cell.isFilled()) {
-		    cells.add(cell);
-		}
-	    }
-
-	    found |= processNakedSets(cells);
-	    
-	    cells.clear();
+	    found |= processNakedSets(puzzle.findColumn(i, true));
 	}
 
-	// TODO: Add constant
 	for (int squareX = 0; squareX < 3; ++squareX) {
 	    for (int squareY = 0; squareY < 3; ++squareY) {
-		for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {
-		    for (int j = squareX * 3; j < squareX * 3 + 3; ++j) {
-			Cell cell = puzzle.getCell(j, i);
-			if (! cell.isFilled()) {
-			    cells.add(cell);
-			}
-		    }
-		}
-		
-		found |= processNakedSets(cells);
-		
-		cells.clear();
+		found |= processNakedSets(puzzle.findSquare(squareX, squareY, true));
 	    }
 	}
 
@@ -136,54 +107,21 @@ public class HumanLikeSolver {
     public boolean processHiddenSets(Puzzle puzzle) {
 	boolean found = false;
 	
-	Set<Cell> cells = new HashSet<>();
-
-	// Looks for naked sets in rows
+	// Looks for hidden sets in rows
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		Cell cell = puzzle.getCell(j, i);
-		if (! cell.isFilled()) {
-		    cells.add(cell);
-		}
-	    }
-
-	    found |= processHiddenSets(cells);
-	    
-	    cells.clear();
+	    found |= processHiddenSets(puzzle.findRow(i, true));
 	}
 
 	// Looks for hidden sets in columns
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		Cell cell = puzzle.getCell(i, j);
-		if (! cell.isFilled()) {
-		    cells.add(cell);
-		}
-	    }
-
-	    found |= processHiddenSets(cells);
-	    
-	    cells.clear();
+	    found |= processHiddenSets(puzzle.findColumn(i, true));
 	}
 
-	// TODO: Add constant
 	for (int squareX = 0; squareX < 3; ++squareX) {
 	    for (int squareY = 0; squareY < 3; ++squareY) {
-		for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {
-		    for (int j = squareX * 3; j < squareX * 3 + 3; ++j) {
-			Cell cell = puzzle.getCell(j, i);
-			if (! cell.isFilled()) {
-			    cells.add(cell);
-			}
-		    }
-		}
-
-		found |= processHiddenSets(cells);
-		
-		cells.clear();
+		found |= processHiddenSets(puzzle.findSquare(squareX, squareY, true));
 	    }
 	}
-
 
 	return found;
     }
@@ -237,6 +175,153 @@ public class HumanLikeSolver {
 
 	return found;
     }
+
+    // TODO: Use constant for 3
+    public boolean processBoxLineReduction(Puzzle puzzle) {
+	boolean found = false;
+
+	for (int candidate = 1; candidate <= Puzzle.sideLength; ++candidate) {
+
+	    for (int i = 0; i < Puzzle.sideLength; ++i) {
+		List<Set<Cell>> regions = new ArrayList<>();
+		for (int j = 0; j < 3; ++j) {
+		    regions.add(new HashSet<>());
+		}
+
+		Set<Cell> cells = puzzle.findRow(i, true);
+		for (Cell cell : cells) {
+		    if (cell.getCandidates().contains(candidate)) {
+			regions.get(cell.getSquareX()).add(cell);
+		    }
+		}
+
+		found |= processBoxLineReduction(puzzle, regions, candidate);
+	    }
+
+	    for (int i = 0; i < Puzzle.sideLength; ++i) {
+		List<Set<Cell>> regions = new ArrayList<>();
+		for (int j = 0; j < 3; ++j) {
+		    regions.add(new HashSet<>());
+		}
+
+		Set<Cell> cells = puzzle.findColumn(i, true);
+		for (Cell cell : cells) {
+		    if (cell.getCandidates().contains(candidate)) {
+			regions.get(cell.getSquareY()).add(cell);
+		    }
+		}
+
+		found |= processBoxLineReduction(puzzle, regions, candidate);
+	    }
+
+	}
+
+	return found;
+    }
+
+    public boolean processBoxLineReduction(Puzzle puzzle, List<Set<Cell>> regions, int candidate) {
+	boolean found = false;
+	
+	Set<Cell> boxLineReduction = null;
+
+	if (regions.get(0).size() >= 2 && regions.get(1).size() == 0 && regions.get(2).size() == 0) {
+	    boxLineReduction = regions.get(0);
+	} else if (regions.get(0).size() == 0 && regions.get(1).size() >= 2 && regions.get(2).size() == 0) {
+	    boxLineReduction = regions.get(1);
+	} else if (regions.get(0).size() == 0 && regions.get(1).size() == 0 && regions.get(2).size() >= 2) {
+	    boxLineReduction = regions.get(2);
+	}	
+	
+	if (boxLineReduction != null) {
+	    Cell cell = boxLineReduction.iterator().next();
+
+	    Set<Cell> square = puzzle.findSquare(cell.getSquareX(), cell.getSquareY(), true);
+	    square.removeAll(boxLineReduction);
+
+	    for (Cell c : square) {
+		found |= c.getCandidates().remove(candidate);
+	    }
+	}
+
+	return found;
+    }
+
+
+    public boolean processPointingPairs(Puzzle puzzle) {
+	boolean found = false;
+
+	for (int candidate = 1; candidate <= Puzzle.sideLength; ++candidate) {
+
+	    for (int squareY = 0; squareY < Puzzle.BLOCKS_PER_LINE; ++squareY) {
+		for (int squareX = 0; squareX < Puzzle.BLOCKS_PER_LINE; ++squareX) {
+		    List<Set<Cell>> regions = new ArrayList<>();
+		    for (int j = 0; j < 3; ++j) {
+			regions.add(new HashSet<>());
+		    }
+
+		    for (Cell cell : puzzle.findSquare(squareX, squareY, true)) {
+			if (cell.getCandidates().contains(candidate)) {
+			    regions.get(cell.getY() % 3).add(cell);
+			}
+		    }
+
+		    found |= processPointingPairs(puzzle, regions, candidate, true);
+		}
+	    }
+
+	    for (int squareY = 0; squareY < Puzzle.BLOCKS_PER_LINE; ++squareY) {
+		for (int squareX = 0; squareX < Puzzle.BLOCKS_PER_LINE; ++squareX) {
+		    List<Set<Cell>> regions = new ArrayList<>();
+		    for (int j = 0; j < 3; ++j) {
+			regions.add(new HashSet<>());
+		    }
+
+		    for (Cell cell : puzzle.findSquare(squareX, squareY, true)) {
+			if (cell.getCandidates().contains(candidate)) {
+			    regions.get(cell.getX() % 3).add(cell);
+			}
+		    }
+
+		    found |= processPointingPairs(puzzle, regions, candidate, false);
+		}
+	    }
+	}
+	
+	return found;
+    }
+
+    public boolean processPointingPairs(Puzzle puzzle, List<Set<Cell>> regions, int candidate, boolean horizontal) {
+	boolean found = false;
+	Set<Cell> pointingPair = null;
+	
+	if (regions.get(0).size() >= 2 && regions.get(1).size() == 0 && regions.get(2).size() == 0) {
+	    pointingPair = regions.get(0);
+	} else if (regions.get(0).size() == 0 && regions.get(1).size() >= 2 && regions.get(2).size() == 0) {
+	    pointingPair = regions.get(1);
+	} else if (regions.get(0).size() == 0 && regions.get(1).size() == 0 && regions.get(2).size() >= 2) {
+	    pointingPair = regions.get(2);
+	}
+
+	if (pointingPair != null) {
+	    Cell cell = pointingPair.iterator().next();
+	    Set<Cell> line = null;
+
+	    if (horizontal) {
+		line = puzzle.findRow(cell.getY(), true);
+	    } else {
+		line = puzzle.findColumn(cell.getX(), true);
+	    }
+
+	    line.removeAll(pointingPair);
+
+	    for (Cell c : line) {
+		found |= c.getCandidates().remove(candidate);
+	    }
+	}
+
+	return found;
+    }
+    
 
     private void removeCandidates(Puzzle puzzle, int x, int y, int value) {
 	Set<Cell> cellsInRegion = new HashSet<>();

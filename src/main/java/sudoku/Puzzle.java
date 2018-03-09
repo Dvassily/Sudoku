@@ -7,7 +7,8 @@ import java.util.HashSet;
 
 public class Puzzle implements Cloneable {
     public static final int sideLength = 9;
-    public static final int blockSize = 3;
+    public static final int BLOCK_SIZE = 3;
+    public static final int BLOCKS_PER_LINE = 3;
     public static final int NUMBER_OF_CELLS = 81;
     
     private List<List<Cell>> content;
@@ -63,11 +64,11 @@ public class Puzzle implements Cloneable {
     public Set<Cell> findCellsInRegion(int x, int y) {
 	Set<Cell> cells = new HashSet<>();
 
-	int squareX = x / Puzzle.blockSize;
-	int squareY = y / Puzzle.blockSize;
+	int squareX = x / Puzzle.BLOCK_SIZE;
+	int squareY = y / Puzzle.BLOCK_SIZE;
 
-	for (int i = squareY * Puzzle.blockSize; i < squareY * Puzzle.blockSize + Puzzle.blockSize; ++i) {
-	    for (int j = squareX * Puzzle.blockSize; j < squareX * Puzzle.blockSize + Puzzle.blockSize; ++j) {
+	for (int i = squareY * Puzzle.BLOCK_SIZE; i < squareY * Puzzle.BLOCK_SIZE + Puzzle.BLOCK_SIZE; ++i) {
+	    for (int j = squareX * Puzzle.BLOCK_SIZE; j < squareX * Puzzle.BLOCK_SIZE + Puzzle.BLOCK_SIZE; ++j) {
 		if (i != y && j != x) {
 		    cells.add(getCell(j, i));
 		}
@@ -89,6 +90,58 @@ public class Puzzle implements Cloneable {
 	return cells;
     }
 
+    public Set<Cell> findRow(int y, boolean filterFilled) {
+	Set<Cell> cells = new HashSet<>();
+
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    if (filterFilled) {
+		if (! getCell(i, y).isFilled()) {
+		    cells.add(getCell(i, y));
+		}
+	    } else {
+		cells.add(getCell(i, y));
+	    }
+	}
+
+	return cells;
+    }
+
+    public Set<Cell> findColumn(int x, boolean filterFilled) {
+	Set<Cell> cells = new HashSet<>();
+
+	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    if (filterFilled) {
+		if (! getCell(x, i).isFilled()) {
+		    cells.add(getCell(x, i));
+		}
+	    } else {
+		cells.add(getCell(x, i));
+	    }
+	}
+
+	return cells;
+    }
+
+    public Set<Cell> findSquare(int squareX, int squareY, boolean filterFilled) {
+	Set<Cell> cells = new HashSet<>();
+
+	// TODO: Add constant for 3
+	for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {
+	    for (int j = squareX * 3; j < squareX * 3 + 3; ++j) {
+		Cell cell = getCell(j, i);
+		if (filterFilled) {
+		    if (! cell.isFilled()) {
+			cells.add(cell);
+		    }
+		} else {
+		    cells.add(cell);
+		}
+	    }
+	}
+
+	return cells;
+    }
+    
     public Set<Integer> findCandidates(int x, int y) {
 	Set<Integer> candidates = new HashSet<Integer>();
 
@@ -178,6 +231,5 @@ public class Puzzle implements Cloneable {
 	}
 
 	System.out.println(result);
-
     }
 }

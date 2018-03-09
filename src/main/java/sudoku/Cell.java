@@ -23,6 +23,18 @@ public class Cell implements Cloneable {
 	return y;
     }
 
+    public int getSquareX() {
+	return x / Puzzle.BLOCK_SIZE;
+    }
+
+    public int getSquareY() {
+	return y / Puzzle.BLOCK_SIZE;
+    }
+
+    public boolean isInSameSquare(Cell cell) {
+	return getSquareX() == cell.getSquareX() && getSquareY() == cell.getSquareY();
+    }
+
     public void setValue(int value) {
 	this.value = value;
     }
