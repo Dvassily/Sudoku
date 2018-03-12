@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
 
+import sudoku.solver.Solver;
+
 public class PuzzleGenerator {
     public Puzzle generate(double holesProportion) {
 	Puzzle puzzle = generateTerminalState();

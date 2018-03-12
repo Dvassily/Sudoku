@@ -10,6 +10,7 @@ public class Puzzle implements Cloneable {
     public static final int BLOCK_SIZE = 3;
     public static final int BLOCKS_PER_LINE = 3;
     public static final int NUMBER_OF_CELLS = 81;
+    public static final int NUMBER_OF_VALUES = 9;
     
     private List<List<Cell>> content;
 
@@ -90,8 +91,8 @@ public class Puzzle implements Cloneable {
 	return cells;
     }
 
-    public Set<Cell> findRow(int y, boolean filterFilled) {
-	Set<Cell> cells = new HashSet<>();
+    public List<Cell> findRow(int y, boolean filterFilled) {
+	List<Cell> cells = new ArrayList<>();
 
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
 	    if (filterFilled) {
@@ -106,8 +107,8 @@ public class Puzzle implements Cloneable {
 	return cells;
     }
 
-    public Set<Cell> findColumn(int x, boolean filterFilled) {
-	Set<Cell> cells = new HashSet<>();
+    public List<Cell> findColumn(int x, boolean filterFilled) {
+	List<Cell> cells = new ArrayList<>();
 
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
 	    if (filterFilled) {
@@ -122,8 +123,8 @@ public class Puzzle implements Cloneable {
 	return cells;
     }
 
-    public Set<Cell> findSquare(int squareX, int squareY, boolean filterFilled) {
-	Set<Cell> cells = new HashSet<>();
+    public List<Cell> findSquare(int squareX, int squareY, boolean filterFilled) {
+	List<Cell> cells = new ArrayList<>();
 
 	// TODO: Add constant for 3
 	for (int i = squareY * 3; i < squareY * 3 + 3; ++i) {

@@ -2,12 +2,14 @@ package sudoku;
 
 import java.util.List;
 
+import sudoku.solver.Solver;
+
 public class Sudoku
 {
     public static void main( String[] args )
     {
 	System.out.println("Puzzle : ");
-	Puzzle puzzle = new PuzzleGenerator().generate(0.72);
+	Puzzle puzzle = new PuzzleGenerator().generate(0.71);
         System.out.println(puzzle);
 	
 	System.out.println("Evaluation : ");

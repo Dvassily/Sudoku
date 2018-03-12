@@ -1,5 +1,7 @@
 package sudoku;
 
+import sudoku.solver.HumanLikeSolver;
+
 public class PuzzleEvaluator {
     private int score = 0;
     private Puzzle puzzle;
@@ -11,6 +13,8 @@ public class PuzzleEvaluator {
     private static int HIDDEN_PAIR_SCORE = 20;
     private static int HIDDEN_TRIPLET_SCORE = 30;
     private static int HIDDEN_QUADRUPLET_SCORE = 40;
+    private static int INTERSECTION_REMOVAL_SCORE = 20;
+    private static int X_WING_SCORE = 50;
     
     public PuzzleEvaluator(Puzzle puzzle) {
 	this.puzzle = (Puzzle) puzzle.clone();
@@ -34,6 +38,18 @@ public class PuzzleEvaluator {
 	    }
 	    
 	    while (solver.processNakedSets(puzzle)) {
+		updated = true;
+	    }
+
+	    while (solver.processBoxLineReduction(puzzle)) {
+		updated = true;
+	    }
+
+	    while (solver.processPointingPairs(puzzle)) {
+		updated = true;
+	    }
+
+	    while (solver.processXWing(puzzle)) {
 		updated = true;
 	    }
 
@@ -65,6 +81,12 @@ public class PuzzleEvaluator {
 	    break;
 	case HIDDEN_QUADRUPLET:
 	    score += HIDDEN_QUADRUPLET_SCORE;
+	    break;
+	case INTERSECTION_REMOVAL:
+	    score += INTERSECTION_REMOVAL_SCORE;
+	    break;
+	case X_WING:
+	    score += X_WING_SCORE;
 	    break;
 	default:
 	    // TODO: throw exception

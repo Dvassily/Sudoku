@@ -18,7 +18,6 @@ public class ConstraintChecker {
 	    }
 	}
 	
-
 	for (int i = 0; i < Puzzle.sideLength; i++) {
 	    for (int j = 0; j < Puzzle.sideLength; j++) {
 		int value = puzzle.getCell(j, i).getValue();
