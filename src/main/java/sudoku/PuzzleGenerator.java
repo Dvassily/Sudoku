@@ -9,10 +9,10 @@ import java.util.Random;
 import sudoku.solver.Solver;
 
 public class PuzzleGenerator {
-    public Puzzle generate(double holesProportion) {
+    public Puzzle generate() {
 	Puzzle puzzle = generateTerminalState();
-
-	digHoles(puzzle, holesProportion);
+	
+	digHoles(puzzle);
 	
 	return puzzle;
     }
@@ -23,19 +23,17 @@ public class PuzzleGenerator {
 	return new Solver().solve(puzzle);
     }
 
-    public void digHoles(Puzzle puzzle, double holesProportion) {
+    public void digHoles(Puzzle puzzle) {
 	int holes = 0;
 
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
 	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		if (new Random().nextDouble() < holesProportion) {
-		    Cell cell = puzzle.getCell(j, i);
+		Cell cell = puzzle.getCell(j, i);
 
-		    if (checkUniqueSolution(puzzle, cell)) {
-			cell.setValue(0);
-		    } else {
-			cell.setValue(cell.getValue());
-		    }
+		if (checkUniqueSolution(puzzle, cell)) {
+		    cell.setValue(0);
+		} else {
+		    cell.setValue(cell.getValue());
 		}
 	    }
 	}
@@ -45,7 +43,10 @@ public class PuzzleGenerator {
 	int value = cell.getValue();
 
 	int solutions = 1;
-	for (int i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
+	int i;
+	for (i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
+	    System.out.println(i);
+
 	    if (i != value) {
 		cell.setValue(i);
 			
@@ -55,6 +56,7 @@ public class PuzzleGenerator {
 		}
 	    }
 	}
+	System.out.println(i);
 
 	return (solutions == 1);
     }

@@ -8,7 +8,7 @@ import sudoku.*;
 public class SolverTest {
     @Test
     public void testSolve() {
-	Puzzle puzzle = new PuzzleGenerator().generate(0.49);
+	Puzzle puzzle = new PuzzleGenerator().generate();
 	Puzzle solution = new Solver().solve(puzzle);
 	assertTrue(new ConstraintChecker().check(puzzle));
     }

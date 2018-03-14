@@ -9,7 +9,7 @@ public class Sudoku
     public static void main( String[] args )
     {
 	System.out.println("Puzzle : ");
-	Puzzle puzzle = new PuzzleGenerator().generate(0.71);
+	Puzzle puzzle = new PuzzleGenerator().generate();
         System.out.println(puzzle);
 	
 	System.out.println("Evaluation : ");
