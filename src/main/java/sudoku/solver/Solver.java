@@ -16,13 +16,6 @@ public class Solver  {
 	    return null;
 	}
 
-	Puzzle tmp = (Puzzle) puzzle.clone();
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		puzzle.getCell(j, i).getCandidates().add(puzzle.findCandidates(j, i));
-	    }
-	}
-	
 	//List<Puzzle> solutions = new ArrayList<>();
 	Puzzle solution = null;
 	int x = 0;
@@ -82,7 +75,7 @@ public class Solver  {
 	return null;
     }
 
-    private void setAndUpdateCandidates(int x, int y, int value) {
+    private void setAndUpdateCandidates(Puzzle puzzle, int x, int y, int value) {
 	puzzle.setValue(x, y, value);
 
 	for (Cell cell : puzzle.findCellsInRegion(x, y)) {

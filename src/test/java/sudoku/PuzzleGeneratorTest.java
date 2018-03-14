@@ -11,7 +11,7 @@ public class PuzzleGeneratorTest {
     // TODO: Redo tests
     @Test
     public void testGenerate() {
-	Puzzle puzzle = new PuzzleGenerator().generate();
+	Puzzle puzzle = new PuzzleGenerator().generate(49);
 	
 	Set<Integer> values = new HashSet<>();
 	

@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Collections;
 
 import sudoku.solver.Solver;
 
 public class PuzzleGenerator {
-    public Puzzle generate() {
+    public Puzzle generate(int givens) {
 	Puzzle puzzle = generateTerminalState();
 	
-	digHoles(puzzle);
+	digHoles(puzzle, Puzzle.NUMBER_OF_CELLS - givens);
 	
 	return puzzle;
     }
@@ -23,18 +24,27 @@ public class PuzzleGenerator {
 	return new Solver().solve(puzzle);
     }
 
-    public void digHoles(Puzzle puzzle) {
+    public void digHoles(Puzzle puzzle, int numberOfHoles) {
 	int holes = 0;
-
+	List<Cell> cells = new ArrayList<>();
+	
 	for (int i = 0; i < Puzzle.sideLength; ++i) {
 	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		Cell cell = puzzle.getCell(j, i);
+		cells.add(puzzle.getCell(j, i));
+	    }
+	}
 
-		if (checkUniqueSolution(puzzle, cell)) {
-		    cell.setValue(0);
-		} else {
-		    cell.setValue(cell.getValue());
-		}
+	Collections.shuffle(cells);
+
+	while (holes < numberOfHoles) {
+	    Cell cell = cells.get(0);
+	    cells.remove(0);
+	    
+	    if (checkUniqueSolution(puzzle, cell)) {
+		cell.setValue(0);
+		++holes;
+	    } else {
+		cell.setValue(cell.getValue());
 	    }
 	}
     }
