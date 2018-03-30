@@ -21,7 +21,7 @@ public class PuzzleGenerator {
     public Puzzle generateTerminalState() {
 	Puzzle puzzle = new Puzzle();
 	
-	return new Solver().solve(puzzle);
+	return new Solver().solve(puzzle, false).get(0);
     }
 
     public void digHoles(Puzzle puzzle, int numberOfHoles) {
@@ -38,33 +38,35 @@ public class PuzzleGenerator {
 
 	while (holes < numberOfHoles) {
 	    Cell cell = cells.get(0);
+	    int value = cell.getValue();
 	    cells.remove(0);
+	    cell.setValue(0);
 	    
-	    if (checkUniqueSolution(puzzle, cell)) {
-		cell.setValue(0);
-		++holes;
+	    List<Puzzle> solutions = new Solver().solve(puzzle, true);
+	    if (solutions.size() > 1) {
+		cell.setValue(value);
 	    } else {
-		cell.setValue(cell.getValue());
+		++holes;
 	    }
 	}
     }
 
-    public boolean checkUniqueSolution(Puzzle puzzle, Cell cell) {
-	int value = cell.getValue();
+    // public boolean checkUniqueSolution(Puzzle puzzle, Cell cell) {
+    // 	int value = cell.getValue();
 
-	int solutions = 1;
-	int i;
-	for (i = 1; i <= Puzzle.SIDE_LENGTH && solutions == 1; ++i) {
-	    if (i != value) {
-		cell.setValue(i);
+    // 	int solutions = 1;
+    // 	int i;
+    // 	for (i = 1; i <= Puzzle.SIDE_LENGTH && solutions == 1; ++i) {
+    // 	    if (i != value) {
+    // 		cell.setValue(i);
 			
-		Puzzle solution = new Solver().solve(puzzle);
-		if (solution != null) {
-		    ++solutions;
-		}
-	    }
-	}
-
-	return (solutions == 1);
-    }
+    // 		Puzzle solution = new Solver().solve(puzzle).;
+    // 		if (solution != null) {
+    // 		    ++solutions;
+    // 		}
+    // 	    }
+    // 	}
+	
+    // 	return (solutions == 1);
+    // }
 }

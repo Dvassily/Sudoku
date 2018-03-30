@@ -18,7 +18,7 @@ public class Sudoku
 	System.out.println("grade : " + puzzleEvaluator.getScore());
 	
 	System.out.println("Solution : ");
-	Puzzle solution = new Solver().solve(puzzle);
+	Puzzle solution = new Solver().solve(puzzle, false).get(0);
 	System.out.println(solution);
     }
 }

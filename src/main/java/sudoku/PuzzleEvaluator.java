@@ -15,6 +15,9 @@ public class PuzzleEvaluator {
     private static int HIDDEN_QUADRUPLET_SCORE = 40;
     private static int INTERSECTION_REMOVAL_SCORE = 20;
     private static int X_WING_SCORE = 50;
+    private static int SINGLE_CHAIN_TWICE_IN_UNIT_SCORE = 100;
+    private static int SINGLE_CHAIN_OPPOSITE_IN_UNIT_SCORE = 110;
+    private static int SINGLE_CHAIN_TWO_COLORS_ELSEWHERE_SCORE = 110;
     
     public PuzzleEvaluator(Puzzle puzzle) {
 	this.puzzle = (Puzzle) puzzle.clone();
@@ -88,6 +91,16 @@ public class PuzzleEvaluator {
 	case X_WING:
 	    score += X_WING_SCORE;
 	    break;
+	case SINGLE_CHAIN_TWICE_IN_UNIT:
+	    score += SINGLE_CHAIN_TWICE_IN_UNIT_SCORE;
+	    break;
+	case SINGLE_CHAIN_OPPOSITE_IN_UNIT:
+	    score += SINGLE_CHAIN_OPPOSITE_IN_UNIT_SCORE;
+	    break;
+	case SINGLE_CHAIN_TWO_COLORS_ELSEWHERE:
+	    score += SINGLE_CHAIN_TWO_COLORS_ELSEWHERE_SCORE;
+	    break;
+
 	default:
 	    // TODO: throw exception
 	}

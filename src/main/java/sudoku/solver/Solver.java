@@ -11,13 +11,13 @@ import java.util.Collections;
 import sudoku.*;
 
 public class Solver  {
-    public Puzzle solve(Puzzle puzzle) {
+    public List<Puzzle> solve(Puzzle puzzle, boolean findAll) {
+	List<Puzzle> results = new ArrayList<>();
+	
 	if (! new ConstraintChecker().check(puzzle)) {
-	    return null;
+	    return results;
 	}
 
-	//List<Puzzle> solutions = new ArrayList<>();
-	Puzzle solution = null;
 	int x = 0;
 	int y = 0;
 
@@ -28,7 +28,7 @@ public class Solver  {
 		x = 0;
 
 		if (y == Puzzle.SIDE_LENGTH) {
-		    return (Puzzle) puzzle.clone();
+		    results.add((Puzzle) puzzle.clone());
 		}
 	    }
 	}
@@ -37,17 +37,18 @@ public class Solver  {
 
 	Collections.shuffle(candidates);
 	for (int candidate : candidates) {
-	    solution = fill(x, y, candidate, (Puzzle) puzzle.clone());
-	    if (solution != null) {
-		return solution;
+	    results.addAll(fill(x, y, candidate, (Puzzle) puzzle.clone(), findAll));
+	    
+	    if (! findAll && results.size() == 1) {
+		return results;
 	    }
-
 	}
 
-	return null;
+	return results;
     }
     
-    public Puzzle fill(int x, int y, int value, Puzzle puzzle) {
+    public List<Puzzle> fill(int x, int y, int value, Puzzle puzzle, boolean findAll) {
+	List<Puzzle> results = new ArrayList<>();
 	puzzle.setValue(x, y, value);
 	
 	while (y < Puzzle.SIDE_LENGTH && puzzle.getCell(x, y).isFilled()) {
@@ -59,20 +60,23 @@ public class Solver  {
 	}
 	
 	if (y == Puzzle.SIDE_LENGTH) {
-	    return puzzle;
+	    results.add(puzzle);
+	    return results;
 	}
 
 	List<Integer> candidates = new ArrayList<>(puzzle.findCandidates(x, y));
 
 	Collections.shuffle(candidates);
 	for (int candidate : candidates) {
-	    Puzzle solution = fill(x, y, candidate, (Puzzle) puzzle.clone());
-	    if (solution != null) {
-		return solution;
+	    List<Puzzle> solutions = fill(x, y, candidate, (Puzzle) puzzle.clone(), findAll);
+	    results.addAll(solutions);
+	    
+	    if (! findAll && results.size() == 1) {
+		return results;
 	    }
 	}
 
-	return null;
+	return results;
     }
 
     private void setAndUpdateCandidates(Puzzle puzzle, int x, int y, int value) {

@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 import sudoku.*;
+import static sudoku.Strategy.*;
 
 public class SingleChainProcessor {
     private PuzzleEvaluator puzzleEvaluator;
@@ -21,6 +22,8 @@ public class SingleChainProcessor {
     }
 
     public boolean process(Puzzle puzzle) {
+	boolean found = false;
+	
 	for (int candidate = 1; candidate <= Puzzle.NUMBER_OF_VALUES; ++candidate) {
 	    Set<Cell> processed = new HashSet<>();
 	    
@@ -28,9 +31,9 @@ public class SingleChainProcessor {
 		for (int x = 0; x < Puzzle.SIDE_LENGTH; ++x) {
 		    List<ChainNode> chain = assembleChain(puzzle, puzzle.getCell(x, y), processed, candidate);
 
-		    twiceInUnit(chain, candidate);
-		    oppositeInUnit(puzzle, chain, candidate);
-		    twoColorsElsewhere(puzzle, chain, candidate);
+		    found |= twiceInUnit(chain, candidate);
+		    found |= oppositeInUnit(puzzle, chain, candidate);
+		    found |= twoColorsElsewhere(puzzle, chain, candidate);
 		}
 	    }
 
@@ -58,12 +61,20 @@ public class SingleChainProcessor {
 		    node.cell.getCandidates().remove(candidate);
 		}
 	    }
-	}
 
+	    if (puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(SINGLE_CHAIN_TWICE_IN_UNIT);
+	    }
+
+	    return true;
+	}
+	
 	return false;
     }
 
     private boolean oppositeInUnit(Puzzle puzzle, List<ChainNode> chain, int candidate) {
+	boolean found = false;
+
 	List<Cell> cells = new ArrayList<>();
 	for (ChainNode node : chain) {
 	    cells.add(node.cell);
@@ -71,36 +82,68 @@ public class SingleChainProcessor {
 
 	for (int i = 0; i < chain.size(); ++i) {
 	    for (int j = i + 1; j < chain.size(); ++j) {
+		boolean removed = false;
+		
 		if (shareRow(chain.get(i).cell, chain.get(j).cell) && chain.get(i).color != chain.get(j).color) {
 		    for (Cell cell : puzzle.findRow(chain.get(i).cell.getY(), true)) {
 			if (! cells.contains(cell)) {
-			    cell.getCandidates().remove(candidate);
+			    removed |=cell.getCandidates().remove(candidate);
 			}
 		    }
 		}
 
+		if (removed) {
+		    if (puzzleEvaluator != null) {
+			puzzleEvaluator.incrementScore(SINGLE_CHAIN_OPPOSITE_IN_UNIT);
+		    }
+
+		    found = true;
+		}
+
+		removed = false;
+		
 		if (shareColumn(chain.get(i).cell, chain.get(j).cell) && chain.get(i).color != chain.get(j).color) {
 		    for (Cell cell : puzzle.findColumn(chain.get(i).cell.getX(), true)) {
 			if (! cells.contains(cell)) {
-			    cell.getCandidates().remove(candidate);
+			    removed |=cell.getCandidates().remove(candidate);
 			}
 		    }
 		}
 
+		if (removed) {
+		    if (puzzleEvaluator != null) {
+			puzzleEvaluator.incrementScore(SINGLE_CHAIN_OPPOSITE_IN_UNIT);
+		    }
+
+		    found = true;
+		}
+
+		removed = false;
+		
 		if (shareSquare(chain.get(i).cell, chain.get(j).cell) && chain.get(i).color != chain.get(j).color) {
 		    for (Cell cell : puzzle.findSquare(chain.get(i).cell.getSquareX(), chain.get(i).cell.getSquareY(), true)) {
 			if (! cells.contains(cell)) {
-			    cell.getCandidates().remove(candidate);
+			    removed |=cell.getCandidates().remove(candidate);
 			}
 		    }
 		}
+
+		if (removed) {
+		    if (puzzleEvaluator != null) {
+			puzzleEvaluator.incrementScore(SINGLE_CHAIN_OPPOSITE_IN_UNIT);
+		    }
+
+		    found = true;
+		}
 	    }
 	}
-
-	return false;
+	
+	return found;
     }
 
     private boolean twoColorsElsewhere(Puzzle puzzle, List<ChainNode> chain, int candidate) {
+	boolean found = false;
+	
 	List<Cell> cells = new ArrayList<>();
 	for (ChainNode node : chain) {
 	    cells.add(node.cell);
@@ -110,21 +153,30 @@ public class SingleChainProcessor {
 	for (int i = 0; i < chain.size(); ++i) {
 	    for (int j = i + 1; j < chain.size(); ++j) {
 		if (chain.get(i).color != chain.get(j).color) {
-		    Cell intersection = puzzle.getCell(chain.get(i).cell.getX(), chain.get(j).cell.getY());
+		    List<Cell> intersections = new ArrayList<>();
+		    intersections.add(puzzle.getCell(chain.get(i).cell.getX(), chain.get(j).cell.getY()));
+		    intersections.add(puzzle.getCell(chain.get(j).cell.getX(), chain.get(i).cell.getY()));
 
-		    if ( ! cells.contains(intersection) && intersection.getCandidates().contains(candidate)) {
-			intersection.getCandidates().remove(candidate);
-		    }
-		    
-		    intersection = puzzle.getCell(chain.get(j).cell.getX(), chain.get(i).cell.getY());
-		    if ( ! cells.contains(intersection) && intersection.getCandidates().contains(candidate)) {
-			intersection.getCandidates().remove(candidate);
+		    for (Cell intersection : intersections) {
+			boolean removed = false;
+			
+			if ( ! cells.contains(intersection) && intersection.getCandidates().contains(candidate)) {
+			    removed |= intersection.getCandidates().remove(candidate);
+			}
+
+			if (removed) {
+			    if (puzzleEvaluator != null) {
+				puzzleEvaluator.incrementScore(SINGLE_CHAIN_TWO_COLORS_ELSEWHERE);
+			    }
+
+			    found = true;
+			}
 		    }
 		}
 	    }
 	}
 
-	return false;
+	return found;
     }
     
     private List<ChainNode> assembleChain(Puzzle puzzle, Cell cell, Set<Cell> processed, int candidate) {
