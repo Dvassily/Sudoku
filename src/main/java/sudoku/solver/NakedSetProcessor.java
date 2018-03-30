@@ -22,12 +22,12 @@ public class NakedSetProcessor {
 	boolean found = false;
 	
 	// Looks for naked sets in rows
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    found |= process(new HashSet<>(puzzle.findRow(i, true)));
 	}
 
 	// Looks for naked sets in columns
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    found |= process(new HashSet<>(puzzle.findColumn(i, true)));
 	}
 

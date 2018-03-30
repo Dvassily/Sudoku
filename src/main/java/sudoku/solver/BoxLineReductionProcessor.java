@@ -23,9 +23,9 @@ public class BoxLineReductionProcessor {
     public boolean process(Puzzle puzzle) {
 	boolean found = false;
 
-	for (int candidate = 1; candidate <= Puzzle.sideLength; ++candidate) {
+	for (int candidate = 1; candidate <= Puzzle.SIDE_LENGTH; ++candidate) {
 
-	    for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 		List<Set<Cell>> regions = new ArrayList<>();
 		for (int j = 0; j < 3; ++j) {
 		    regions.add(new HashSet<>());
@@ -41,7 +41,7 @@ public class BoxLineReductionProcessor {
 		found |= process(puzzle, regions, candidate);
 	    }
 
-	    for (int i = 0; i < Puzzle.sideLength; ++i) {
+	    for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 		List<Set<Cell>> regions = new ArrayList<>();
 		for (int j = 0; j < 3; ++j) {
 		    regions.add(new HashSet<>());

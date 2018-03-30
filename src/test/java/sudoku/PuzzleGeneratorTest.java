@@ -24,8 +24,8 @@ public class PuzzleGeneratorTest {
 	}
 	
 
-	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    for (int j = 0; j < Puzzle.sideLength; j++) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; i++) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; j++) {
 		int value = puzzle.getCell(j, i).getValue();
 
 		if (value != 0) {
@@ -37,8 +37,8 @@ public class PuzzleGeneratorTest {
 	    values.clear();
 	}
 
-	for (int i = 0; i < Puzzle.sideLength; i++) {
-	    for (int j = 0; j < Puzzle.sideLength; j++) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; i++) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; j++) {
 		int value = puzzle.getCell(i, j).getValue();
 
 		if (value != 0) {

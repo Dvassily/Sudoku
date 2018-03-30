@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
+import sudoku.exceptions.*;
+
 public class Puzzle implements Cloneable {
-    public static final int sideLength = 9;
+    public static final int SIDE_LENGTH = 9;
     public static final int BLOCK_SIZE = 3;
     public static final int BLOCKS_PER_LINE = 3;
     public static final int NUMBER_OF_CELLS = 81;
@@ -17,10 +19,10 @@ public class Puzzle implements Cloneable {
     public Puzzle() {
 	content = new ArrayList<List<Cell>>();
 
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    content.add(new ArrayList<Cell>());
 	    
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; ++j) {
 		Cell cell = new Cell(j, i, 0);
 		content.get(i).add(cell);
 	    }
@@ -34,8 +36,8 @@ public class Puzzle implements Cloneable {
     }
 
     public boolean isCompleted() {
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; ++j) {
 		if (! getCell(i, j).isFilled()) {
 		    return false;
 		}
@@ -50,8 +52,8 @@ public class Puzzle implements Cloneable {
     }
 
     public void updateCandidates() {
-	for (int y = 0; y < Puzzle.sideLength; ++y) {
-	    for (int x = 0; x < Puzzle.sideLength; ++x) {
+	for (int y = 0; y < Puzzle.SIDE_LENGTH; ++y) {
+	    for (int x = 0; x < Puzzle.SIDE_LENGTH; ++x) {
 		Cell cell = getCell(x, y);
 		cell.getCandidates().clear();
 		    
@@ -76,13 +78,13 @@ public class Puzzle implements Cloneable {
 	    }
 	}
 
-	for (int i = 0; i < Puzzle.sideLength; i++) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; i++) {
 	    if (i != x) {
 		cells.add(getCell(i, y));
 	    }
 	}
 
-	for (int i = 0; i < Puzzle.sideLength; i++) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; i++) {
 	    if (i != y) {
 		cells.add(getCell(x, i));
 	    }
@@ -94,7 +96,7 @@ public class Puzzle implements Cloneable {
     public List<Cell> findRow(int y, boolean filterFilled) {
 	List<Cell> cells = new ArrayList<>();
 
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    if (filterFilled) {
 		if (! getCell(i, y).isFilled()) {
 		    cells.add(getCell(i, y));
@@ -110,7 +112,7 @@ public class Puzzle implements Cloneable {
     public List<Cell> findColumn(int x, boolean filterFilled) {
 	List<Cell> cells = new ArrayList<>();
 
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    if (filterFilled) {
 		if (! getCell(x, i).isFilled()) {
 		    cells.add(getCell(x, i));
@@ -150,7 +152,7 @@ public class Puzzle implements Cloneable {
 	    return candidates;
 	}
 	
-	for (int i = 1; i <= Puzzle.sideLength; ++i) {
+	for (int i = 1; i <= Puzzle.SIDE_LENGTH; ++i) {
 	    candidates.add(i);
 	}
 
@@ -172,14 +174,36 @@ public class Puzzle implements Cloneable {
 	}
 
 	puzzle.content = new ArrayList<List<Cell>>();
-	for (int i = 0; i < Puzzle.sideLength; i++) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; i++) {
 	    puzzle.content.add(new ArrayList<Cell>());
-	    for (int j = 0; j < Puzzle.sideLength; j++) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; j++) {
 		puzzle.content.get(i).add((Cell) content.get(i).get(j).clone());
 	    }
 	}
 
 	return puzzle;
+    }
+
+    public void load(String puzzle) {
+	if (puzzle.length() != 81) {
+	    throw new InvalidPuzzleException(puzzle);
+	}
+
+	for (int i = 0; i < puzzle.length(); ++i) {
+	    char current = puzzle.charAt(i);
+	    
+	    if (current == '.') {
+		current = '0';
+	    }
+
+	    int value = Character.getNumericValue(current);
+
+	    if (value < 0) {
+		throw new InvalidPuzzleException(puzzle);
+	    }
+
+	    setValue(i % Puzzle.SIDE_LENGTH, i / Puzzle.SIDE_LENGTH, value);
+	}
     }
 
     public String toString() {
@@ -188,11 +212,11 @@ public class Puzzle implements Cloneable {
 
 	result += horizontalSeparator + "\n";
 	
-	for (int i = 0; i < sideLength; ++i)  {
+	for (int i = 0; i < SIDE_LENGTH; ++i)  {
 	    List<Cell> row = content.get(i);
 
 	    result += " | ";
-	    for (int j = 0; j < sideLength; ++j)  {
+	    for (int j = 0; j < SIDE_LENGTH; ++j)  {
 		result += row.get(j).getValue() + " ";
 		if ((j + 1) % 3 == 0) {
 		     result += "| ";
@@ -208,29 +232,5 @@ public class Puzzle implements Cloneable {
 	}
 
 	return result;
-    }
-
-    public void printCandidates() {
-	String result = "";
-
-	int min = 0;
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		String candidates = getCell(j, i).getCandidates().toString();
-		if (min == 0 || candidates.length() > min) {
-		    min = candidates.length();
-		}
-	    }
-	}
-	
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
-		result += String.format("%" + min + "s ", getCell(j, i).getCandidates().toString());
-	    }
-	    
-	    result += "\n";
-	}
-
-	System.out.println(result);
     }
 }

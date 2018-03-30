@@ -23,11 +23,11 @@ public class Solver  {
 
 	while (puzzle.getCell(x, y).isFilled()) {
 	    ++x;
-	    if (x == Puzzle.sideLength) {
+	    if (x == Puzzle.SIDE_LENGTH) {
 		++y;
 		x = 0;
 
-		if (y == Puzzle.sideLength) {
+		if (y == Puzzle.SIDE_LENGTH) {
 		    return (Puzzle) puzzle.clone();
 		}
 	    }
@@ -50,15 +50,15 @@ public class Solver  {
     public Puzzle fill(int x, int y, int value, Puzzle puzzle) {
 	puzzle.setValue(x, y, value);
 	
-	while (y < Puzzle.sideLength && puzzle.getCell(x, y).isFilled()) {
+	while (y < Puzzle.SIDE_LENGTH && puzzle.getCell(x, y).isFilled()) {
 	    ++x;
-	    if (x == Puzzle.sideLength) {
+	    if (x == Puzzle.SIDE_LENGTH) {
 		++y;
 		x = 0;
 	    }
 	}
 	
-	if (y == Puzzle.sideLength) {
+	if (y == Puzzle.SIDE_LENGTH) {
 	    return puzzle;
 	}
 

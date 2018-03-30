@@ -25,8 +25,8 @@ public class HumanLikeSolver {
     public boolean processSingleCandidates(Puzzle puzzle) {
 	boolean found = false;
 	
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; ++j) {
 		Set<Integer> cellCandidates = puzzle.getCell(j, i).getCandidates();
 		
 		if (cellCandidates.size() == 1) {
@@ -64,5 +64,9 @@ public class HumanLikeSolver {
 
     public boolean processXWing(Puzzle puzzle) {
 	return new XWingProcessor(puzzleEvaluator).process(puzzle);	
+    }    
+
+    public boolean processSingleChains(Puzzle puzzle) {
+	return new SingleChainProcessor(puzzleEvaluator).process(puzzle);	
     }    
 }

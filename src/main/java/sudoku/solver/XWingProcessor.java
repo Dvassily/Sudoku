@@ -20,7 +20,7 @@ public class XWingProcessor {
     public boolean process(Puzzle puzzle) {
 	boolean found = false;
 	
-    	for (int i = 0; i < Puzzle.sideLength; ++i) {
+    	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
     	    List<Cell> row = puzzle.findRow(i, true);
 
     	    for (int candidate = 1; candidate <= Puzzle.NUMBER_OF_VALUES; ++candidate) {
@@ -38,7 +38,7 @@ public class XWingProcessor {
     	    }
     	}
 
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    List<Cell> column = puzzle.findColumn(i, true);
 
     	    for (int candidate = 1; candidate <= Puzzle.NUMBER_OF_VALUES; ++candidate) {
@@ -62,7 +62,7 @@ public class XWingProcessor {
     public boolean findParallelRow(Puzzle puzzle, Cell cell1, Cell cell2, int candidate, int y) {
 	boolean found = false;
 	
-	for (int i = y + 1; i < Puzzle.sideLength; ++i) {
+	for (int i = y + 1; i < Puzzle.SIDE_LENGTH; ++i) {
     	    List<Cell> row = puzzle.findRow(i, true);
 	    List<Cell> candidateCells = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class XWingProcessor {
     public boolean findParallelColumn(Puzzle puzzle, Cell cell1, Cell cell2, int candidate, int x) {
 	boolean found = false;
 	
-	for (int i = x + 1; i < Puzzle.sideLength; ++i) {
+	for (int i = x + 1; i < Puzzle.SIDE_LENGTH; ++i) {
     	    List<Cell> row = puzzle.findColumn(i, true);
 	    List<Cell> candidateCells = new ArrayList<>();
 

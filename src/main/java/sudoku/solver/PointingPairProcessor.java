@@ -22,7 +22,7 @@ public class PointingPairProcessor {
     public boolean process(Puzzle puzzle) {
 	boolean found = false;
 
-	for (int candidate = 1; candidate <= Puzzle.sideLength; ++candidate) {
+	for (int candidate = 1; candidate <= Puzzle.SIDE_LENGTH; ++candidate) {
 
 	    for (int squareY = 0; squareY < Puzzle.BLOCKS_PER_LINE; ++squareY) {
 		for (int squareX = 0; squareX < Puzzle.BLOCKS_PER_LINE; ++squareX) {

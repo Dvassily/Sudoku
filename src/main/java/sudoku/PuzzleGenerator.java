@@ -28,8 +28,8 @@ public class PuzzleGenerator {
 	int holes = 0;
 	List<Cell> cells = new ArrayList<>();
 	
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; ++j) {
 		cells.add(puzzle.getCell(j, i));
 	    }
 	}
@@ -54,9 +54,7 @@ public class PuzzleGenerator {
 
 	int solutions = 1;
 	int i;
-	for (i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
-	    System.out.println(i);
-
+	for (i = 1; i <= Puzzle.SIDE_LENGTH && solutions == 1; ++i) {
 	    if (i != value) {
 		cell.setValue(i);
 			
@@ -66,7 +64,6 @@ public class PuzzleGenerator {
 		}
 	    }
 	}
-	System.out.println(i);
 
 	return (solutions == 1);
     }
