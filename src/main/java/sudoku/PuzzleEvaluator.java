@@ -18,6 +18,7 @@ public class PuzzleEvaluator {
     private static int SINGLE_CHAIN_TWICE_IN_UNIT_SCORE = 100;
     private static int SINGLE_CHAIN_OPPOSITE_IN_UNIT_SCORE = 110;
     private static int SINGLE_CHAIN_TWO_COLORS_ELSEWHERE_SCORE = 110;
+    private static int Y_WING_SCORE = 75;
     
     public PuzzleEvaluator(Puzzle puzzle) {
 	this.puzzle = (Puzzle) puzzle.clone();
@@ -100,7 +101,9 @@ public class PuzzleEvaluator {
 	case SINGLE_CHAIN_TWO_COLORS_ELSEWHERE:
 	    score += SINGLE_CHAIN_TWO_COLORS_ELSEWHERE_SCORE;
 	    break;
-
+	case Y_WING:
+	    score += Y_WING_SCORE;
+	    break;
 	default:
 	    // TODO: throw exception
 	}

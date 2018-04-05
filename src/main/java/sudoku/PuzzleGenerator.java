@@ -36,7 +36,7 @@ public class PuzzleGenerator {
 
 	Collections.shuffle(cells);
 
-	while (holes < numberOfHoles) {
+	while (! cells.isEmpty() && holes < numberOfHoles) {
 	    Cell cell = cells.get(0);
 	    int value = cell.getValue();
 	    cells.remove(0);

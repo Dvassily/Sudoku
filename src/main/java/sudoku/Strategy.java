@@ -12,7 +12,8 @@ public enum Strategy {
     X_WING,
     SINGLE_CHAIN_TWICE_IN_UNIT,
     SINGLE_CHAIN_OPPOSITE_IN_UNIT,
-    SINGLE_CHAIN_TWO_COLORS_ELSEWHERE;
+    SINGLE_CHAIN_TWO_COLORS_ELSEWHERE,
+    Y_WING;
 
     // TODO: Throw exception
     public static Strategy nakedSet(int cardinality) {

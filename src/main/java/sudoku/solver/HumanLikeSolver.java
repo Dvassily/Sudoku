@@ -68,5 +68,10 @@ public class HumanLikeSolver {
 
     public boolean processSingleChains(Puzzle puzzle) {
 	return new SingleChainProcessor(puzzleEvaluator).process(puzzle);	
+    }
+    
+    public boolean processYWing(Puzzle puzzle) {
+	return new YWingProcessor(puzzleEvaluator).process(puzzle);	
     }    
+
 }
