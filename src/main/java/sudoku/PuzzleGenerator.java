@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Collections;
 
-import sudoku.solver.Solver;
+import sudoku.solver.BacktrackingSolver;
 
 public class PuzzleGenerator {
     public Puzzle generate(int givens) {
@@ -21,7 +21,7 @@ public class PuzzleGenerator {
     public Puzzle generateTerminalState() {
 	Puzzle puzzle = new Puzzle();
 	
-	return new Solver().solve(puzzle, false).get(0);
+	return new BacktrackingSolver().solve(puzzle, false).get(0);
     }
 
     public void digHoles(Puzzle puzzle, int numberOfHoles) {
@@ -42,7 +42,7 @@ public class PuzzleGenerator {
 	    cells.remove(0);
 	    cell.setValue(0);
 	    
-	    List<Puzzle> solutions = new Solver().solve(puzzle, true);
+	    List<Puzzle> solutions = new BacktrackingSolver().solve(puzzle, true);
 	    if (solutions.size() > 1) {
 		cell.setValue(value);
 	    } else {
@@ -50,23 +50,4 @@ public class PuzzleGenerator {
 	    }
 	}
     }
-
-    // public boolean checkUniqueSolution(Puzzle puzzle, Cell cell) {
-    // 	int value = cell.getValue();
-
-    // 	int solutions = 1;
-    // 	int i;
-    // 	for (i = 1; i <= Puzzle.SIDE_LENGTH && solutions == 1; ++i) {
-    // 	    if (i != value) {
-    // 		cell.setValue(i);
-			
-    // 		Puzzle solution = new Solver().solve(puzzle).;
-    // 		if (solution != null) {
-    // 		    ++solutions;
-    // 		}
-    // 	    }
-    // 	}
-	
-    // 	return (solutions == 1);
-    // }
 }

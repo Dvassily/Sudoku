@@ -2,88 +2,36 @@ package sudoku.solver;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Comparator;
-import java.util.Collections;
 
-import sudoku.*;
+public class Solver {
+    private List<IStrategySolver> solvers;
+    private boolean evaluation = false;
+    
+    private Solver(List<IStrategySolver> solvers, boolean evaluation) {
+	this.solvers = solvers;
+	this.evaluation = evaluation;
+    }
 
-public class Solver  {
-    public List<Puzzle> solve(Puzzle puzzle, boolean findAll) {
-	List<Puzzle> results = new ArrayList<>();
-	
-	if (! new ConstraintChecker().check(puzzle)) {
-	    return results;
-	}
-
-	int x = 0;
-	int y = 0;
-
-	while (puzzle.getCell(x, y).isFilled()) {
-	    ++x;
-	    if (x == Puzzle.SIDE_LENGTH) {
-		++y;
-		x = 0;
-
-		if (y == Puzzle.SIDE_LENGTH) {
-		    results.add((Puzzle) puzzle.clone());
-		}
-	    }
-	}
-
-	List<Integer> candidates = new ArrayList<>(puzzle.findCandidates(x, y));
-
-	Collections.shuffle(candidates);
-	for (int candidate : candidates) {
-	    results.addAll(fill(x, y, candidate, (Puzzle) puzzle.clone(), findAll));
-	    
-	    if (! findAll && results.size() == 1) {
-		return results;
-	    }
-	}
-
-	return results;
+    public int solve() {
+	return 0;
     }
     
-    public List<Puzzle> fill(int x, int y, int value, Puzzle puzzle, boolean findAll) {
-	List<Puzzle> results = new ArrayList<>();
-	puzzle.setValue(x, y, value);
+    public class SolverBuilder {
+	private List<IStrategySolver> solvers = new ArrayList<>();
+	private boolean evaluation = false;
 	
-	while (y < Puzzle.SIDE_LENGTH && puzzle.getCell(x, y).isFilled()) {
-	    ++x;
-	    if (x == Puzzle.SIDE_LENGTH) {
-		++y;
-		x = 0;
-	    }
-	}
-	
-	if (y == Puzzle.SIDE_LENGTH) {
-	    results.add(puzzle);
-	    return results;
+	public SolverBuilder addSolver(IStrategySolver solver) {
+	    solvers.add(solver);
+	    return this;
 	}
 
-	List<Integer> candidates = new ArrayList<>(puzzle.findCandidates(x, y));
-
-	Collections.shuffle(candidates);
-	for (int candidate : candidates) {
-	    List<Puzzle> solutions = fill(x, y, candidate, (Puzzle) puzzle.clone(), findAll);
-	    results.addAll(solutions);
-	    
-	    if (! findAll && results.size() == 1) {
-		return results;
-	    }
+	public SolverBuilder withEvaluation() {
+	    evaluation = true;
+	    return this;
 	}
 
-	return results;
-    }
-
-    private void setAndUpdateCandidates(Puzzle puzzle, int x, int y, int value) {
-	puzzle.setValue(x, y, value);
-
-	for (Cell cell : puzzle.findCellsInRegion(x, y)) {
-	    cell.getCandidates().remove(value);
+	public Solver build() {
+	    return new Solver(solvers, evaluation);
 	}
     }
 }
