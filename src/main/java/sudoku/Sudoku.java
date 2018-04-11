@@ -2,7 +2,7 @@ package sudoku;
 
 import java.util.List;
 
-import sudoku.solver.Solver;
+import sudoku.solver.BacktrackingSolver;
 
 public class Sudoku
 {
@@ -18,7 +18,7 @@ public class Sudoku
 	System.out.println("grade : " + puzzleEvaluator.getScore());
 	
 	System.out.println("Solution : ");
-	Puzzle solution = new Solver().solve(puzzle);
+	Puzzle solution = new BacktrackingSolver().solve(puzzle);
 	System.out.println(solution);
     }
 }
