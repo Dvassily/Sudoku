@@ -10,18 +10,8 @@ import static sudoku.Strategy.*;
 import static sudoku.util.SolverHelper.visibleCells;
 
 public class YWingProcessor {
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public YWingProcessor(PuzzleEvaluator puzzleEvaluator) {
-    	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public YWingProcessor() {
-    	this(null);
-    }
-    
-    public boolean process(Puzzle puzzle) {
-	boolean found = false;
+    public List<SolverStep> process(Puzzle puzzle) {
+	List<SolverStep> steps = new ArrayList<>();
 	
     	for (int y = 0; y < Puzzle.SIDE_LENGTH; ++y) {
 	    for (int x = 0; x < Puzzle.SIDE_LENGTH; ++x) {
@@ -65,17 +55,14 @@ public class YWingProcessor {
 				List<Cell> intersection = visibleCells(puzzle, wing1);
 				intersection.retainAll(visibleCells(puzzle, wing2));
 
+				SolverStep step = new SolverStep(Y_WING);
 				for (Cell cell : intersection) {
-				    removed |= cell.getCandidates().remove(c);
-				}
-			    }
-
-			    if (removed) {
-				if (puzzleEvaluator != null) {
-				    puzzleEvaluator.incrementScore(Y_WING);
+				    step.removeCandidate(cell, c);
 				}
 
-				found = true;
+				if (step.getRemovals().size() > 0) {
+				    steps.add(step);
+				}
 			    }
 			}
 		    }
@@ -83,7 +70,7 @@ public class YWingProcessor {
 	    }
 	}
 
-	return found;
+	return steps;
     }
 
     private static List<Cell> filterBivalues(List<Cell> cells) {

@@ -10,17 +10,6 @@ import sudoku.*;
 import static sudoku.Strategy.nakedSet;
 
 public class NakedSetProcessor {
-    // TODO: Remove
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public NakedSetProcessor(PuzzleEvaluator puzzleEvaluator) {
-	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public NakedSetProcessor() {
-	this(null);
-    }
-    
     public List<SolverStep> process(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	

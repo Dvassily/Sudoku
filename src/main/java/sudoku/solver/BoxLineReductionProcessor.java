@@ -9,16 +9,6 @@ import static sudoku.Strategy.*;
 import sudoku.*;
 
 public class BoxLineReductionProcessor {
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public BoxLineReductionProcessor(PuzzleEvaluator puzzleEvaluator) {
-	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public BoxLineReductionProcessor() {
-	this(null);
-    }
-
     // TODO: Use constant for 3
     public List<SolverStep> process(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();

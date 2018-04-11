@@ -10,16 +10,6 @@ import sudoku.*;
 import static sudoku.Strategy.hiddenSet;
 
 public class HiddenSetProcessor {
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public HiddenSetProcessor(PuzzleEvaluator puzzleEvaluator) {
-	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public HiddenSetProcessor() {
-	this(null);
-    }
-
     public List<SolverStep> process(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	

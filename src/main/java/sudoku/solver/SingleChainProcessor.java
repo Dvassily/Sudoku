@@ -12,16 +12,6 @@ import static sudoku.Strategy.*;
 import static sudoku.util.SolverHelper.visibleCells;
 
 public class SingleChainProcessor {
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public SingleChainProcessor(PuzzleEvaluator puzzleEvaluator) {
-	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public SingleChainProcessor() {
-	this(null);
-    }
-
     public List<SolverStep> process(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	

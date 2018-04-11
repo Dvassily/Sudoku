@@ -47,7 +47,7 @@ public class HumanLikeSolver {
     }
 
     public boolean processNakedSets(Puzzle puzzle) {
-	List<SolverStep> steps = new NakedSetProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new NakedSetProcessor().process(puzzle);
 	
 	for (SolverStep step : steps) {
 	    boolean removed = false;
@@ -65,7 +65,7 @@ public class HumanLikeSolver {
     }
 
     public boolean processHiddenSets(Puzzle puzzle) {
-	List<SolverStep> steps = new HiddenSetProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new HiddenSetProcessor().process(puzzle);
 	
 	for (SolverStep step : steps) {
 	    boolean removed = false;
@@ -84,7 +84,7 @@ public class HumanLikeSolver {
 
         // TODO: Use constant for 3
     public boolean processBoxLineReduction(Puzzle puzzle) {
-	List<SolverStep> steps = new BoxLineReductionProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new BoxLineReductionProcessor().process(puzzle);
 	
 	for (SolverStep step : steps) {
 	    boolean removed = false;
@@ -102,7 +102,7 @@ public class HumanLikeSolver {
     }
 
     public boolean processPointingPairsTriples(Puzzle puzzle) {
-	List<SolverStep> steps = new PointingPairTripleProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new PointingPairTripleProcessor().process(puzzle);
 	
 	for (SolverStep step : steps) {
 	    boolean removed = false;
@@ -120,7 +120,7 @@ public class HumanLikeSolver {
     }    
 
     public boolean processXWing(Puzzle puzzle) {
-	List<SolverStep> steps = new XWingProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new XWingProcessor().process(puzzle);
 	
 	for (SolverStep step : steps) {
 	    boolean removed = false;
@@ -138,7 +138,7 @@ public class HumanLikeSolver {
     }    
 
     public boolean processSingleChains(Puzzle puzzle) {
-	List<SolverStep> steps = new SingleChainProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new SingleChainProcessor().process(puzzle);
 	
 	for (SolverStep step : steps) {
 	    boolean removed = false;
@@ -156,7 +156,21 @@ public class HumanLikeSolver {
     }
     
     public boolean processYWing(Puzzle puzzle) {
-	return new YWingProcessor(puzzleEvaluator).process(puzzle);	
+	List<SolverStep> steps = new YWingProcessor().process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
     }    
 
 }

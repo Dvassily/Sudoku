@@ -9,16 +9,6 @@ import sudoku.*;
 import static sudoku.Strategy.*;
 
 public class PointingPairTripleProcessor {
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public PointingPairTripleProcessor(PuzzleEvaluator puzzleEvaluator) {
-	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public PointingPairTripleProcessor() {
-	this(null);
-    }
-    
     public List<SolverStep> process(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 

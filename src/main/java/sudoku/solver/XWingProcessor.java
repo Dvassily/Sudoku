@@ -7,16 +7,6 @@ import sudoku.*;
 import static sudoku.Strategy.*;
 
 public class XWingProcessor {
-    private PuzzleEvaluator puzzleEvaluator;
-    
-    public XWingProcessor(PuzzleEvaluator puzzleEvaluator) {
-    	this.puzzleEvaluator = puzzleEvaluator;
-    }
-
-    public XWingProcessor() {
-    	this(null);
-    }
-    
     public List<SolverStep> process(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	
