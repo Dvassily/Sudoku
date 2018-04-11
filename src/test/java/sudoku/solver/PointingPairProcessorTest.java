@@ -54,7 +54,7 @@ public class PointingPairProcessorTest {
 
 	puzzle.updateCandidates();
 	
-	new HumanLikeSolver().processPointingPairs(puzzle);
+	new HumanLikeSolver().processPointingPairsTriples(puzzle);
 
 	Set<Integer> candidates = puzzle.getCell(0, 1).getCandidates();
 	assertTrue(candidates.contains(2));
@@ -121,7 +121,7 @@ public class PointingPairProcessorTest {
 
 	puzzle.updateCandidates();
 	
-	new HumanLikeSolver().processPointingPairs(puzzle);
+	new HumanLikeSolver().processPointingPairsTriples(puzzle);
 
 	Set<Integer> candidates = puzzle.getCell(1, 0).getCandidates();
 	assertTrue(candidates.contains(2));

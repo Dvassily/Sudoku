@@ -8,27 +8,27 @@ import java.util.ArrayList;
 import sudoku.*;
 import static sudoku.Strategy.*;
 
-public class PointingPairProcessor {
+public class PointingPairTripleProcessor {
     private PuzzleEvaluator puzzleEvaluator;
     
-    public PointingPairProcessor(PuzzleEvaluator puzzleEvaluator) {
+    public PointingPairTripleProcessor(PuzzleEvaluator puzzleEvaluator) {
 	this.puzzleEvaluator = puzzleEvaluator;
     }
 
-    public PointingPairProcessor() {
+    public PointingPairTripleProcessor() {
 	this(null);
     }
     
-    public boolean process(Puzzle puzzle) {
-	boolean found = false;
+    public List<SolverStep> process(Puzzle puzzle) {
+	List<SolverStep> steps = new ArrayList<>();
 
 	for (int candidate = 1; candidate <= Puzzle.SIDE_LENGTH; ++candidate) {
 
 	    for (int squareY = 0; squareY < Puzzle.BLOCKS_PER_LINE; ++squareY) {
 		for (int squareX = 0; squareX < Puzzle.BLOCKS_PER_LINE; ++squareX) {
-		    List<Set<Cell>> regions = new ArrayList<>();
+		    List<List<Cell>> regions = new ArrayList<>();
 		    for (int j = 0; j < 3; ++j) {
-			regions.add(new HashSet<>());
+			regions.add(new ArrayList<>());
 		    }
 
 		    for (Cell cell : puzzle.findSquare(squareX, squareY, true)) {
@@ -37,15 +37,15 @@ public class PointingPairProcessor {
 			}
 		    }
 
-		    found |= process(puzzle, regions, candidate, true);
+		    steps.addAll(process(puzzle, regions, candidate, true));
 		}
 	    }
 
 	    for (int squareY = 0; squareY < Puzzle.BLOCKS_PER_LINE; ++squareY) {
 		for (int squareX = 0; squareX < Puzzle.BLOCKS_PER_LINE; ++squareX) {
-		    List<Set<Cell>> regions = new ArrayList<>();
+		    List<List<Cell>> regions = new ArrayList<>();
 		    for (int j = 0; j < 3; ++j) {
-			regions.add(new HashSet<>());
+			regions.add(new ArrayList<>());
 		    }
 
 		    for (Cell cell : puzzle.findSquare(squareX, squareY, true)) {
@@ -54,28 +54,28 @@ public class PointingPairProcessor {
 			}
 		    }
 
-		    found |= process(puzzle, regions, candidate, false);
+		    steps.addAll(process(puzzle, regions, candidate, false));
 		}
 	    }
 	}
 
-	return found;
+	return steps;
     }
     
-    public boolean process(Puzzle puzzle, List<Set<Cell>> regions, int candidate, boolean horizontal) {
-	boolean found = false;
-	Set<Cell> pointingPair = null;
+    public List<SolverStep> process(Puzzle puzzle, List<List<Cell>> regions, int candidate, boolean horizontal) {
+	List<SolverStep> steps = new ArrayList<>();
+	List<Cell> pointingPairTriple = null;
 	
 	if (regions.get(0).size() >= 2 && regions.get(1).size() == 0 && regions.get(2).size() == 0) {
-	    pointingPair = regions.get(0);
+	    pointingPairTriple = regions.get(0);
 	} else if (regions.get(0).size() == 0 && regions.get(1).size() >= 2 && regions.get(2).size() == 0) {
-	    pointingPair = regions.get(1);
+	    pointingPairTriple = regions.get(1);
 	} else if (regions.get(0).size() == 0 && regions.get(1).size() == 0 && regions.get(2).size() >= 2) {
-	    pointingPair = regions.get(2);
+	    pointingPairTriple = regions.get(2);
 	}
 
-	if (pointingPair != null) {
-	    Cell cell = pointingPair.iterator().next();
+	if (pointingPairTriple != null) {
+	    Cell cell = pointingPairTriple.iterator().next();
 	    List<Cell> line = null;
 
 	    if (horizontal) {
@@ -84,17 +84,21 @@ public class PointingPairProcessor {
 		line = puzzle.findColumn(cell.getX(), true);
 	    }
 
-	    line.removeAll(pointingPair);
+	    line.removeAll(pointingPairTriple);
 
+	    SolverStep step = new SolverStep(INTERSECTION_REMOVAL);
+	    
 	    for (Cell c : line) {
-		found |= c.getCandidates().remove(candidate);
+		if (cell.getCandidates().contains(candidate)) {
+		    step.removeCandidate(c, candidate);
+		}
+	    }
+
+	    if (step.getRemovals().size() > 0) {
+		steps.add(step);
 	    }
 	}
-
-	if (puzzleEvaluator != null && found) {
-	    puzzleEvaluator.incrementScore(INTERSECTION_REMOVAL);
-	}
 	
-	return found;
+	return steps;
     }
 }

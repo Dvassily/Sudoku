@@ -37,5 +37,28 @@ public class SolverHelper {
 	    cell.getCandidates().remove(value);
 	}
     }
+        
+    public static List<Cell> visibleCells(Puzzle puzzle, Cell cell) {
+	Set<Cell> cells = new HashSet<>();
 
+	for (Cell c : puzzle.findRow(cell.getY(), true)) {
+	    if (! c.equals(cell)) {
+		cells.add(c);
+	    }
+	}
+
+	for (Cell c : puzzle.findColumn(cell.getX(), true)) {
+	    if (! c.equals(cell)) {
+		cells.add(c);
+	    }
+	}
+
+	for (Cell c : puzzle.findSquare(cell.getSquareX(), cell.getSquareY(), true)) {
+	    if (! c.equals(cell)) {
+		cells.add(c);
+	    }
+	}
+
+	return new ArrayList<>(cells);
+    }
 }

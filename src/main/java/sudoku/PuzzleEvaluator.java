@@ -49,7 +49,7 @@ public class PuzzleEvaluator {
 		updated = true;
 	    }
 
-	    while (solver.processPointingPairs(puzzle)) {
+	    while (solver.processPointingPairsTriples(puzzle)) {
 		updated = true;
 	    }
 
@@ -57,6 +57,13 @@ public class PuzzleEvaluator {
 		updated = true;
 	    }
 
+	    while (solver.processSingleChains(puzzle)) {
+		updated = true;
+	    }
+
+	    while (solver.processYWing(puzzle)) {
+		updated = true;
+	    }
 	} while (updated);
 
 	System.out.println();
