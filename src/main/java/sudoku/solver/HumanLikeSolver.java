@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import sudoku.*;
 import sudoku.util.SolverHelper;
@@ -25,8 +26,8 @@ public class HumanLikeSolver {
     public boolean processSingleCandidates(Puzzle puzzle) {
 	boolean found = false;
 	
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; ++j) {
 		Set<Integer> cellCandidates = puzzle.getCell(j, i).getCandidates();
 		
 		if (cellCandidates.size() == 1) {
@@ -46,23 +47,116 @@ public class HumanLikeSolver {
     }
 
     public boolean processNakedSets(Puzzle puzzle) {
-	return new NakedSetProcessor(puzzleEvaluator).process(puzzle);
+	List<SolverStep> steps = new NakedSetProcessor(puzzleEvaluator).process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
     }
 
     public boolean processHiddenSets(Puzzle puzzle) {
-	return new HiddenSetProcessor(puzzleEvaluator).process(puzzle);	
+	List<SolverStep> steps = new HiddenSetProcessor(puzzleEvaluator).process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
     }
 
         // TODO: Use constant for 3
     public boolean processBoxLineReduction(Puzzle puzzle) {
-	return new BoxLineReductionProcessor(puzzleEvaluator).process(puzzle);	
+	List<SolverStep> steps = new BoxLineReductionProcessor(puzzleEvaluator).process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
     }
 
-    public boolean processPointingPairs(Puzzle puzzle) {
-	return new PointingPairProcessor(puzzleEvaluator).process(puzzle);	
+    public boolean processPointingPairsTriples(Puzzle puzzle) {
+	List<SolverStep> steps = new PointingPairTripleProcessor(puzzleEvaluator).process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
     }    
 
     public boolean processXWing(Puzzle puzzle) {
-	return new XWingProcessor(puzzleEvaluator).process(puzzle);	
+	List<SolverStep> steps = new XWingProcessor(puzzleEvaluator).process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
     }    
+
+    public boolean processSingleChains(Puzzle puzzle) {
+	List<SolverStep> steps = new SingleChainProcessor(puzzleEvaluator).process(puzzle);
+	
+	for (SolverStep step : steps) {
+	    boolean removed = false;
+	    
+	    for (Map.Entry<Cell, Set<Integer>> removals : step.getRemovals().entrySet()) {
+		removed = removals.getKey().getCandidates().removeAll(removals.getValue());
+	    }
+
+	    if (removed && puzzleEvaluator != null) {
+		puzzleEvaluator.incrementScore(step.getStrategy());
+	    }
+	}
+	
+	return (steps.size() > 0)? true : false;
+    }
+    
+    public boolean processYWing(Puzzle puzzle) {
+	return new YWingProcessor(puzzleEvaluator).process(puzzle);	
+    }    
+
 }

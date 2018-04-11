@@ -17,10 +17,10 @@ public class XWingProcessor {
     	this(null);
     }
     
-    public boolean process(Puzzle puzzle) {
-	boolean found = false;
+    public List<SolverStep> process(Puzzle puzzle) {
+	List<SolverStep> steps = new ArrayList<>();
 	
-    	for (int i = 0; i < Puzzle.sideLength; ++i) {
+    	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
     	    List<Cell> row = puzzle.findRow(i, true);
 
     	    for (int candidate = 1; candidate <= Puzzle.NUMBER_OF_VALUES; ++candidate) {
@@ -33,12 +33,12 @@ public class XWingProcessor {
     		}
 
     		if (candidateCells.size() == 2) {
-    		    found |= findParallelRow(puzzle, candidateCells.get(0), candidateCells.get(1), candidate, i);
+    		    steps.addAll(findParallelRow(puzzle, candidateCells.get(0), candidateCells.get(1), candidate, i));
     		}
     	    }
     	}
 
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
 	    List<Cell> column = puzzle.findColumn(i, true);
 
     	    for (int candidate = 1; candidate <= Puzzle.NUMBER_OF_VALUES; ++candidate) {
@@ -51,18 +51,18 @@ public class XWingProcessor {
     		}
 
     		if (candidateCells.size() == 2) {
-    		    found |= findParallelColumn(puzzle, candidateCells.get(0), candidateCells.get(1), candidate, i);
+    		    steps.addAll(findParallelColumn(puzzle, candidateCells.get(0), candidateCells.get(1), candidate, i));
     		}
     	    }
     	}
 
-	return found;
+	return steps;
     }
 
-    public boolean findParallelRow(Puzzle puzzle, Cell cell1, Cell cell2, int candidate, int y) {
-	boolean found = false;
+    public List<SolverStep> findParallelRow(Puzzle puzzle, Cell cell1, Cell cell2, int candidate, int y) {
+	List<SolverStep> steps = new ArrayList<>();
 	
-	for (int i = y + 1; i < Puzzle.sideLength; ++i) {
+	for (int i = y + 1; i < Puzzle.SIDE_LENGTH; ++i) {
     	    List<Cell> row = puzzle.findRow(i, true);
 	    List<Cell> candidateCells = new ArrayList<>();
 
@@ -73,31 +73,37 @@ public class XWingProcessor {
 	    }
 
 	    if (candidateCells.size() == 2 && candidateCells.get(0).getX() == cell1.getX() && candidateCells.get(1).getX() == cell2.getX()) {
+		SolverStep step = new SolverStep(X_WING);
+		
 		for (Cell cell : puzzle.findColumn(cell1.getX(), true)) {
 		    if (cell != cell1 && cell != candidateCells.get(0)) {
-			found |= cell.getCandidates().remove(candidate);
+			if (cell.getCandidates().contains(candidate)) {
+			    step.removeCandidate(cell, candidate);
+			}
 		    }
 		}
 
 		for (Cell cell : puzzle.findColumn(cell2.getX(), true)) {
 		    if (cell != cell2 && cell != candidateCells.get(1)) {
-			found |= cell.getCandidates().remove(candidate);
+			if (cell.getCandidates().contains(candidate)) {
+			    step.removeCandidate(cell, candidate);
+			}
 		    }
+		}
+
+		if (step.getRemovals().size() > 0) {
+		    steps.add(step);
 		}
 	    }
 	}
 
-	if (found && puzzleEvaluator != null) {
-	    puzzleEvaluator.incrementScore(X_WING);
-	}
-
-	return found;
+	return steps;
     }
 
-    public boolean findParallelColumn(Puzzle puzzle, Cell cell1, Cell cell2, int candidate, int x) {
-	boolean found = false;
+    public List<SolverStep> findParallelColumn(Puzzle puzzle, Cell cell1, Cell cell2, int candidate, int x) {
+	List<SolverStep> steps = new ArrayList<>();
 	
-	for (int i = x + 1; i < Puzzle.sideLength; ++i) {
+	for (int i = x + 1; i < Puzzle.SIDE_LENGTH; ++i) {
     	    List<Cell> row = puzzle.findColumn(i, true);
 	    List<Cell> candidateCells = new ArrayList<>();
 
@@ -108,24 +114,30 @@ public class XWingProcessor {
 	    }
 
 	    if (candidateCells.size() == 2 && candidateCells.get(0).getY() == cell1.getY() && candidateCells.get(1).getY() == cell2.getY()) {
+		SolverStep step = new SolverStep(X_WING);
+		
 		for (Cell cell : puzzle.findRow(cell1.getY(), true)) {
 		    if (cell != cell1 && cell != candidateCells.get(0)) {
-			found |= cell.getCandidates().remove(candidate);
+			if (cell.getCandidates().contains(candidate)) {
+			    step.removeCandidate(cell, candidate);
+			}
 		    }
 		}
 
 		for (Cell cell : puzzle.findRow(cell2.getY(), true)) {
 		    if (cell != cell2 && cell != candidateCells.get(1)) {
-			found |= cell.getCandidates().remove(candidate);
+			if (cell.getCandidates().contains(candidate)) {
+			    step.removeCandidate(cell, candidate);
+			}
 		    }
+		}
+
+		if (step.getRemovals().size() > 0) {
+		    steps.add(step);
 		}
 	    }
 	}
-
-	if (found && puzzleEvaluator != null) {
-	    puzzleEvaluator.incrementScore(X_WING);
-	}
 	
-	return found;
+	return steps;
     }
 }

@@ -21,53 +21,33 @@ public class PuzzleGenerator {
     public Puzzle generateTerminalState() {
 	Puzzle puzzle = new Puzzle();
 	
-	return new BacktrackingSolver().solve(puzzle);
+	return new BacktrackingSolver().solve(puzzle, false).get(0);
     }
 
     public void digHoles(Puzzle puzzle, int numberOfHoles) {
 	int holes = 0;
 	List<Cell> cells = new ArrayList<>();
 	
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    for (int j = 0; j < Puzzle.sideLength; ++j) {
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    for (int j = 0; j < Puzzle.SIDE_LENGTH; ++j) {
 		cells.add(puzzle.getCell(j, i));
 	    }
 	}
 
 	Collections.shuffle(cells);
 
-	while (holes < numberOfHoles) {
+	while (! cells.isEmpty() && holes < numberOfHoles) {
 	    Cell cell = cells.get(0);
+	    int value = cell.getValue();
 	    cells.remove(0);
+	    cell.setValue(0);
 	    
-	    if (checkUniqueSolution(puzzle, cell)) {
-		cell.setValue(0);
-		++holes;
+	    List<Puzzle> solutions = new BacktrackingSolver().solve(puzzle, true);
+	    if (solutions.size() > 1) {
+		cell.setValue(value);
 	    } else {
-		cell.setValue(cell.getValue());
+		++holes;
 	    }
 	}
-    }
-
-    public boolean checkUniqueSolution(Puzzle puzzle, Cell cell) {
-	int value = cell.getValue();
-
-	int solutions = 1;
-	int i;
-	for (i = 1; i <= Puzzle.sideLength && solutions == 1; ++i) {
-	    System.out.println(i);
-
-	    if (i != value) {
-		cell.setValue(i);
-			
-		Puzzle solution = new BacktrackingSolver().solve(puzzle);
-		if (solution != null) {
-		    ++solutions;
-		}
-	    }
-	}
-	System.out.println(i);
-
-	return (solutions == 1);
     }
 }

@@ -2,6 +2,8 @@ package sudoku.solver;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import sudoku.util.SolverHelper;
 import sudoku.*;
@@ -18,30 +20,30 @@ public class HiddenSetProcessor {
 	this(null);
     }
 
-    public boolean process(Puzzle puzzle) {
-	boolean found = false;
+    public List<SolverStep> process(Puzzle puzzle) {
+	List<SolverStep> steps = new ArrayList<>();
 	
 	// Looks for hidden sets in rows
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    found |= process(new HashSet<>(puzzle.findRow(i, true)));
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    steps.addAll(process(new HashSet<>(puzzle.findRow(i, true))));
 	}
 
 	// Looks for hidden sets in columns
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    found |= process(new HashSet<>(puzzle.findColumn(i, true)));
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    steps.addAll(process(new HashSet<>(puzzle.findColumn(i, true))));
 	}
 
 	for (int squareX = 0; squareX < 3; ++squareX) {
 	    for (int squareY = 0; squareY < 3; ++squareY) {
-		found |= process(new HashSet<>(puzzle.findSquare(squareX, squareY, true)));
+		steps.addAll(process(new HashSet<>(puzzle.findSquare(squareX, squareY, true))));
 	    }
 	}
 
-	return found;
+	return steps;
     }
 
-    private boolean process(Set<Cell> cells) {
-	boolean found = false;
+    private List<SolverStep> process(Set<Cell> cells) {
+	List<SolverStep> steps = new ArrayList<>();
 	Set<Set<Cell>> subsets = SolverHelper.powerSet(cells);
 
 	for (Set<Cell> subset : subsets) {
@@ -60,33 +62,25 @@ public class HiddenSetProcessor {
 		}
 
 		if (candidates.size() == subset.size()) {
-		    boolean removed = false;
+		    SolverStep step = new SolverStep(hiddenSet(subset.size()));
 		    
 		    for (Cell cell : subset) {
-			Set<Integer> toRemove = new HashSet<>();
 			for (int candidate : cell.getCandidates()) {
-			    if (! candidates.contains(candidate)) {
-				toRemove.add(candidate);
+			    if (! candidates.contains(candidate) && cell.getCandidates().contains(candidate)) {
+				step.removeCandidate(cell, candidate);
 			    }
 			}
-
-			removed |= cell.getCandidates().removeAll(toRemove);
 		    }
 
-		    if (removed) {
-			if (puzzleEvaluator != null) {
-			    puzzleEvaluator.incrementScore(hiddenSet(subset.size()));
-			}
-
-			found = true;
+		    if (step.getRemovals().size() > 0) {
+			steps.add(step);
 		    }
-
 		}
 
 		candidates.clear();
 	    }
 	}
 
-	return found;
+	return steps;
     }
 }

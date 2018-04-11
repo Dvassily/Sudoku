@@ -2,12 +2,15 @@ package sudoku.solver;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import sudoku.util.SolverHelper;
 import sudoku.*;
 import static sudoku.Strategy.nakedSet;
 
 public class NakedSetProcessor {
+    // TODO: Remove
     private PuzzleEvaluator puzzleEvaluator;
     
     public NakedSetProcessor(PuzzleEvaluator puzzleEvaluator) {
@@ -18,31 +21,30 @@ public class NakedSetProcessor {
 	this(null);
     }
     
-    public boolean process(Puzzle puzzle) {
-	boolean found = false;
+    public List<SolverStep> process(Puzzle puzzle) {
+	List<SolverStep> steps = new ArrayList<>();
 	
 	// Looks for naked sets in rows
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    found |= process(new HashSet<>(puzzle.findRow(i, true)));
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    steps.addAll(process(new HashSet<>(puzzle.findRow(i, true))));
 	}
 
 	// Looks for naked sets in columns
-	for (int i = 0; i < Puzzle.sideLength; ++i) {
-	    found |= process(new HashSet<>(puzzle.findColumn(i, true)));
+	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+	    steps.addAll(process(new HashSet<>(puzzle.findColumn(i, true))));
 	}
 
 	for (int squareX = 0; squareX < 3; ++squareX) {
 	    for (int squareY = 0; squareY < 3; ++squareY) {
-		found |= process(new HashSet<>(puzzle.findSquare(squareX, squareY, true)));
+		steps.addAll(process(new HashSet<>(puzzle.findSquare(squareX, squareY, true))));
 	    }
 	}
 
-	return found;
+	return steps;
     }
 
-    private boolean process(Set<Cell> cells) {
-	boolean found = false;
-	
+    private List<SolverStep> process(Set<Cell> cells) {
+	List<SolverStep> steps = new ArrayList<>();
 	Set<Set<Cell>> subsets = SolverHelper.powerSet(cells);
 
 	for (Set<Cell> subset : subsets) {
@@ -53,21 +55,20 @@ public class NakedSetProcessor {
 		}
 
 		if (subset.size() == candidates.size()) {
-		    boolean removed = false;
+		    SolverStep step = new SolverStep(nakedSet(subset.size()));
+
 		    for (Cell cell : cells) {
 			if (! subset.contains(cell)) {
 			    for (int candidate : candidates) {
-				removed |= cell.removeFromCandidates(candidate);
+				if (cell.getCandidates().contains(candidate)) {
+				    step.removeCandidate(cell, candidate);
+				}
 			    }
 			}
 		    }
 
-		    if (removed) {
-			if (puzzleEvaluator != null) {
-			    puzzleEvaluator.incrementScore(nakedSet(subset.size()));
-			}
-
-			found = true;
+		    if (step.getRemovals().size() > 0) {
+			steps.add(step);
 		    }
 		}
 
@@ -75,7 +76,7 @@ public class NakedSetProcessor {
 	    }
 	}
 
-	return found;
+	return steps;
     }
 
 }

@@ -20,15 +20,15 @@ public class BoxLineReductionProcessor {
     }
 
     // TODO: Use constant for 3
-    public boolean process(Puzzle puzzle) {
-	boolean found = false;
+    public List<SolverStep> process(Puzzle puzzle) {
+	List<SolverStep> steps = new ArrayList<>();
 
-	for (int candidate = 1; candidate <= Puzzle.sideLength; ++candidate) {
+	for (int candidate = 1; candidate <= Puzzle.SIDE_LENGTH; ++candidate) {
 
-	    for (int i = 0; i < Puzzle.sideLength; ++i) {
-		List<Set<Cell>> regions = new ArrayList<>();
+	    for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+		List<List<Cell>> regions = new ArrayList<>();
 		for (int j = 0; j < 3; ++j) {
-		    regions.add(new HashSet<>());
+		    regions.add(new ArrayList<>());
 		}
 
 		List<Cell> cells = puzzle.findRow(i, true);
@@ -38,13 +38,13 @@ public class BoxLineReductionProcessor {
 		    }
 		}
 
-		found |= process(puzzle, regions, candidate);
+		steps.addAll(process(puzzle, regions, candidate));
 	    }
 
-	    for (int i = 0; i < Puzzle.sideLength; ++i) {
-		List<Set<Cell>> regions = new ArrayList<>();
+	    for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {
+		List<List<Cell>> regions = new ArrayList<>();
 		for (int j = 0; j < 3; ++j) {
-		    regions.add(new HashSet<>());
+		    regions.add(new ArrayList<>());
 		}
 
 		List<Cell> cells = puzzle.findColumn(i, true);
@@ -54,18 +54,17 @@ public class BoxLineReductionProcessor {
 		    }
 		}
 
-		found |= process(puzzle, regions, candidate);
+		steps.addAll(process(puzzle, regions, candidate));
 	    }
 
 	}
 
-	return found;
+	return steps;
     }
 
-    public boolean process(Puzzle puzzle, List<Set<Cell>> regions, int candidate) {
-	boolean found = false;
-	
-	Set<Cell> boxLineReduction = null;
+    public List<SolverStep> process(Puzzle puzzle, List<List<Cell>> regions, int candidate) {
+	List<SolverStep> steps = new ArrayList<>();
+	List<Cell> boxLineReduction = null;
 
 	if (regions.get(0).size() >= 2 && regions.get(1).size() == 0 && regions.get(2).size() == 0) {
 	    boxLineReduction = regions.get(0);
@@ -76,21 +75,24 @@ public class BoxLineReductionProcessor {
 	}	
 	
 	if (boxLineReduction != null) {
-	    Cell cell = boxLineReduction.iterator().next();
+	    Cell cell = boxLineReduction.get(0);
 
 	    List<Cell> square = puzzle.findSquare(cell.getSquareX(), cell.getSquareY(), true);
 	    square.removeAll(boxLineReduction);
 
+	    SolverStep step = new SolverStep(INTERSECTION_REMOVAL);
 	    for (Cell c : square) {
-		found |= c.getCandidates().remove(candidate);
+		if (c.getCandidates().contains(candidate)) {
+		    step.removeCandidate(c, candidate);
+		}
+	    }
+
+	    if (step.getRemovals().size() > 0) {
+		steps.add(step);
 	    }
 	}
-
-	if (puzzleEvaluator != null && found) {
-	    puzzleEvaluator.incrementScore(INTERSECTION_REMOVAL);
-	}
 	
-	return found;
+	return steps;
     }
 
 }
