@@ -25,8 +25,6 @@ public class Solver {
 	score += processSingleCandidates(puzzle) * SINGLE_CANDIDATE.getScore();
 	
 	if (puzzle.isCompleted()) {
-	    System.out.println(puzzle);
-
 	    return score;
 	}
 	
@@ -43,10 +41,6 @@ public class Solver {
 			updated = true;
 		    }
 
-		    System.out.println(solver.getClass().getSimpleName());
-		    System.out.println(steps.size());
-
-
 		    for (SolverStep step : steps) {
 			step.apply();
 			
@@ -59,8 +53,6 @@ public class Solver {
 		} while (steps.size() > 0);
 	    }
 	} while (updated);
-
-	System.out.println(puzzle);
 
 	return score;
     }

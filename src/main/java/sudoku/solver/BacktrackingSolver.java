@@ -29,6 +29,7 @@ public class BacktrackingSolver  {
 
 		if (y == Puzzle.SIDE_LENGTH) {
 		    results.add((Puzzle) puzzle.clone());
+		    return results;
 		}
 	    }
 	}

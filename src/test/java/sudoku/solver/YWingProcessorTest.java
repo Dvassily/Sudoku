@@ -37,12 +37,6 @@ public class YWingProcessorTest {
 	assertTrue(candidates.contains(7));
 	assertEquals(5, candidates.size());
 
-	System.out.println("@@@@");
-	System.out.println(puzzle.getCell(5, 1).getCandidates());
-	System.out.println(puzzle.getCell(0, 1).getCandidates());
-	System.out.println(puzzle.getCell(5, 3).getCandidates());
-	System.out.println("@@@@");
-
 	for (SolverStep step : new YWingProcessor().solve(puzzle)) {
 	    step.apply();
 	}

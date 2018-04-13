@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Collections;
 
-import sudoku.solver.BacktrackingSolver;
+import sudoku.solver.*;
 
 public class PuzzleGenerator {
     public Puzzle generate(int givens) {
@@ -41,8 +41,20 @@ public class PuzzleGenerator {
 	    int value = cell.getValue();
 	    cells.remove(0);
 	    cell.setValue(0);
-	    
-	    List<Puzzle> solutions = new BacktrackingSolver().solve(puzzle, true);
+
+	    Puzzle tmp = (Puzzle) puzzle.clone();
+	    Solver solver = new Solver.SolverBuilder()
+	    .addSolver(new NakedSetProcessor())
+	    .addSolver(new HiddenSetProcessor())
+	    .addSolver(new BoxLineReductionProcessor())
+	    .addSolver(new PointingPairTripleProcessor())
+	    .addSolver(new XWingProcessor())
+	    .addSolver(new SingleChainProcessor())
+	    .addSolver(new YWingProcessor())
+	    .build();
+
+	    solver.solve(tmp);
+	    List<Puzzle> solutions = new BacktrackingSolver().solve(tmp, true);
 	    if (solutions.size() > 1) {
 		cell.setValue(value);
 	    } else {

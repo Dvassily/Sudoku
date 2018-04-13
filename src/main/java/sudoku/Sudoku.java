@@ -24,11 +24,13 @@ public class Sudoku
 	    .addSolver(new YWingProcessor())
 	    .build();
 
-	int grade = solver.solve((Puzzle) puzzle.clone());
+	Puzzle solution1 = (Puzzle) puzzle.clone();
+	int grade = solver.solve(solution1);
 	System.out.println("grade : " + grade);
+	System.out.println(solution1);
 	
 	System.out.println("Solution : ");
-	Puzzle solution = new BacktrackingSolver().solve(puzzle, false).get(0);
-	System.out.println(solution);
+	Puzzle solution2 = new BacktrackingSolver().solve(puzzle, false).get(0);
+	System.out.println(solution2);
     }
 }
