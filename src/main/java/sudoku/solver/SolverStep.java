@@ -23,6 +23,12 @@ public class SolverStep {
 	return removals;
     }
 
+    public void apply() {
+	for (Map.Entry<Cell, Set<Integer>> removals : removals.entrySet()) {
+	    removals.getKey().getCandidates().removeAll(removals.getValue());
+	}
+    }
+
     public void removeCandidate(Cell cell, int candidate) {
 	if (! removals.containsKey(cell)) {
 	    removals.put(cell, new HashSet<>());

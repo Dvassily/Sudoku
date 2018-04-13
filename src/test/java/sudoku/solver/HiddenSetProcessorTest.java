@@ -67,7 +67,10 @@ public class HiddenSetProcessorTest {
 	assertTrue(candidates.contains(9));
 	assertEquals(6, candidates.size());
 
-	new HumanLikeSolver().processHiddenSets(puzzle);
+	for (SolverStep step : new HiddenSetProcessor().solve(puzzle)) {
+	    step.apply();
+	}
+
 	candidates = puzzle.getCell(7, 0).getCandidates();
 
 	assertTrue(candidates.contains(6));

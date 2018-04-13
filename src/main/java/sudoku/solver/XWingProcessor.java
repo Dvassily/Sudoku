@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import sudoku.*;
 import static sudoku.Strategy.*;
 
-public class XWingProcessor {
-    public List<SolverStep> process(Puzzle puzzle) {
+public class XWingProcessor implements IStrategySolver {
+    public List<SolverStep> solve(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	
     	for (int i = 0; i < Puzzle.SIDE_LENGTH; ++i) {

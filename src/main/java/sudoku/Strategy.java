@@ -1,20 +1,29 @@
 package sudoku;
 
 public enum Strategy {
-    SINGLE_CANDIDATE,
-    NAKED_PAIR,
-    NAKED_TRIPLET,
-    NAKED_QUADRUPLET,
-    HIDDEN_PAIR,
-    HIDDEN_TRIPLET,
-    HIDDEN_QUADRUPLET,
-    INTERSECTION_REMOVAL,
-    X_WING,
-    SINGLE_CHAIN_TWICE_IN_UNIT,
-    SINGLE_CHAIN_OPPOSITE_IN_UNIT,
-    SINGLE_CHAIN_TWO_COLORS_ELSEWHERE,
-    Y_WING;
+    SINGLE_CANDIDATE(10),
+    NAKED_PAIR(20),
+    NAKED_TRIPLET(30),
+    NAKED_QUADRUPLET(40),
+    HIDDEN_PAIR(20),
+    HIDDEN_TRIPLET(30),
+    HIDDEN_QUADRUPLET(40),
+    INTERSECTION_REMOVAL(20),
+    X_WING(50),
+    SINGLE_CHAIN_TWICE_IN_UNIT(100),
+    SINGLE_CHAIN_TWO_COLORS_ELSEWHERE(110),
+    Y_WING(75);
 
+    private int score;
+    
+    Strategy(int score) {
+	this.score = score;
+    }
+
+    public int getScore() {
+	return score;
+    }
+    
     // TODO: Throw exception
     public static Strategy nakedSet(int cardinality) {
 	switch(cardinality) {

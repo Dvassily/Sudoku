@@ -11,8 +11,8 @@ import sudoku.*;
 import static sudoku.Strategy.*;
 import static sudoku.util.SolverHelper.visibleCells;
 
-public class SingleChainProcessor {
-    public List<SolverStep> process(Puzzle puzzle) {
+public class SingleChainProcessor implements IStrategySolver {
+    public List<SolverStep> solve(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	
 	for (int candidate = 1; candidate <= Puzzle.NUMBER_OF_VALUES; ++candidate) {

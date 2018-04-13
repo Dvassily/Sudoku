@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import sudoku.*;
 import static sudoku.Strategy.*;
 
-public class PointingPairTripleProcessor {
-    public List<SolverStep> process(Puzzle puzzle) {
+public class PointingPairTripleProcessor implements IStrategySolver {
+    public List<SolverStep> solve(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 
 	for (int candidate = 1; candidate <= Puzzle.SIDE_LENGTH; ++candidate) {
@@ -79,7 +79,7 @@ public class PointingPairTripleProcessor {
 	    SolverStep step = new SolverStep(INTERSECTION_REMOVAL);
 	    
 	    for (Cell c : line) {
-		if (cell.getCandidates().contains(candidate)) {
+		if (c.getCandidates().contains(candidate)) {
 		    step.removeCandidate(c, candidate);
 		}
 	    }

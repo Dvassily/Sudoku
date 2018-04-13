@@ -66,8 +66,10 @@ public class XWingProcessorTest {
 	puzzle.setValue(2, 8, 1);
 	puzzle.setValue(8, 8, 5);
 	puzzle.updateCandidates();
-	
-	new HumanLikeSolver().processXWing(puzzle);
+
+	for (SolverStep step : new XWingProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	Set<Integer> candidates = puzzle.getCell(3, 0).getCandidates();
 	assertTrue(candidates.contains(2));
@@ -150,7 +152,9 @@ public class XWingProcessorTest {
 	puzzle.setValue(6, 8, 1);
 	puzzle.updateCandidates();
 
-	new HumanLikeSolver().processXWing(puzzle);
+	for (SolverStep step : new XWingProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 	
 	Set<Integer> candidates = puzzle.getCell(1, 4).getCandidates();
 	assertTrue(candidates.contains(3));

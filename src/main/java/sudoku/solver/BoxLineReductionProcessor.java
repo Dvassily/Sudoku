@@ -8,9 +8,9 @@ import java.util.HashSet;
 import static sudoku.Strategy.*;
 import sudoku.*;
 
-public class BoxLineReductionProcessor {
+public class BoxLineReductionProcessor implements IStrategySolver {
     // TODO: Use constant for 3
-    public List<SolverStep> process(Puzzle puzzle) {
+    public List<SolverStep> solve(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 
 	for (int candidate = 1; candidate <= Puzzle.SIDE_LENGTH; ++candidate) {

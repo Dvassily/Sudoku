@@ -9,8 +9,10 @@ import sudoku.*;
 import static sudoku.Strategy.*;
 import static sudoku.util.SolverHelper.visibleCells;
 
-public class YWingProcessor {
-    public List<SolverStep> process(Puzzle puzzle) {
+public class YWingProcessor implements IStrategySolver {
+    public List<SolverStep> solve(Puzzle puzzle) {
+	System.out.println(puzzle);
+
 	List<SolverStep> steps = new ArrayList<>();
 	
     	for (int y = 0; y < Puzzle.SIDE_LENGTH; ++y) {
@@ -30,19 +32,21 @@ public class YWingProcessor {
 			    int c = 0;
 
 			    List<Integer> candidates = new ArrayList<>(hinge.getCandidates());
+			    candidates.retainAll(wing1.getCandidates());
+
+			    if (candidates.size() == 1) {
+				b = candidates.iterator().next();
+
+			    }
+
+			    candidates = new ArrayList<>(hinge.getCandidates());
 			    candidates.retainAll(wing2.getCandidates());
 
 			    if (candidates.size() == 1) {
 				a = candidates.iterator().next();
 			    }
 
-			    candidates = new ArrayList<>(hinge.getCandidates());
-			    candidates.retainAll(wing1.getCandidates());
-
-			    if (candidates.size() == 1) {
-				b = candidates.iterator().next();
-			    }
-
+			    
 			    candidates = new ArrayList<>(wing1.getCandidates());
 			    candidates.retainAll(wing2.getCandidates());
 
@@ -51,14 +55,21 @@ public class YWingProcessor {
 			    }
 
 			    boolean removed = false;
-			    if (a != b && b != c && a != c) {
+			    if (a != 0 && b != 0 && c != 0 && a != b && b != c && a != c) {
+				System.out.println(hinge + ";" + wing1 + ";" + wing2);
+				System.out.println(a + "-" + b + "-" + c);
+
+				
 				List<Cell> intersection = visibleCells(puzzle, wing1);
 				intersection.retainAll(visibleCells(puzzle, wing2));
 
 				SolverStep step = new SolverStep(Y_WING);
 				for (Cell cell : intersection) {
-				    step.removeCandidate(cell, c);
+				    if (cell.getCandidates().contains(c)) {
+					step.removeCandidate(cell, c);
+				    }
 				}
+				System.out.println(step.getRemovals());
 
 				if (step.getRemovals().size() > 0) {
 				    steps.add(step);

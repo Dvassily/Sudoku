@@ -14,7 +14,10 @@ public class SingleChainProcessorTest {
 
 	puzzle.updateCandidates();
 
-	new HumanLikeSolver().processSingleChains(puzzle);
+		
+	for (SolverStep step : new SingleChainProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	Set<Integer> candidates = puzzle.getCell(0, 3).getCandidates();
 	assertTrue(candidates.contains(6));
@@ -54,8 +57,10 @@ public class SingleChainProcessorTest {
 	Puzzle puzzle = new Puzzle();
 	puzzle.load("..85.21.335...12.8.21.3..5.56324.7.14821.753.179.53..2.3..2581.8.731..25215.843..");
 	puzzle.updateCandidates();
-
-	new HumanLikeSolver().processSingleChains(puzzle);
+		
+	for (SolverStep step : new SingleChainProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	Set<Integer> candidates = puzzle.getCell(7, 1).getCandidates();
 	assertTrue(candidates.contains(6));
@@ -76,7 +81,9 @@ public class SingleChainProcessorTest {
 
 	puzzle.updateCandidates();
 
-	new HumanLikeSolver().processSingleChains(puzzle);
+	for (SolverStep step : new SingleChainProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	Set<Integer> candidates = puzzle.getCell(4, 1).getCandidates();
 	assertTrue(candidates.contains(5));

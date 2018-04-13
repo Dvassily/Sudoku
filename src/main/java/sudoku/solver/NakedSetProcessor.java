@@ -9,8 +9,8 @@ import sudoku.util.SolverHelper;
 import sudoku.*;
 import static sudoku.Strategy.nakedSet;
 
-public class NakedSetProcessor {
-    public List<SolverStep> process(Puzzle puzzle) {
+public class NakedSetProcessor implements IStrategySolver {
+    public List<SolverStep> solve(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	
 	// Looks for naked sets in rows

@@ -54,8 +54,10 @@ public class PointingPairProcessorTest {
 
 	puzzle.updateCandidates();
 	
-	new HumanLikeSolver().processPointingPairsTriples(puzzle);
-
+	for (SolverStep step : new PointingPairTripleProcessor().solve(puzzle)) {
+	    step.apply();
+	}
+	
 	Set<Integer> candidates = puzzle.getCell(0, 1).getCandidates();
 	assertTrue(candidates.contains(2));
 	assertTrue(candidates.contains(4));
@@ -120,8 +122,10 @@ public class PointingPairProcessorTest {
 	puzzle.setValue(8, 7, 2);
 
 	puzzle.updateCandidates();
-	
-	new HumanLikeSolver().processPointingPairsTriples(puzzle);
+		
+	for (SolverStep step : new PointingPairTripleProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	Set<Integer> candidates = puzzle.getCell(1, 0).getCandidates();
 	assertTrue(candidates.contains(2));

@@ -7,15 +7,17 @@ import static org.junit.Assert.*;
 import sudoku.*;
 
 public class YWingProcessorTest {
-    // TODO: Example grid : http://www.sudokuwiki.org/X_Wing_Strategy
+    // TODO: Example grid : http://www.sudokuwiki.org/Y_Wing_Strategy
     @Test
     public void testProcess() {
 	Puzzle puzzle = new Puzzle();
-	puzzle.load("9..24.....5.69.231.2..5..9..9.7..32...29356.7.7...29...69.2..7351..79.622.7.86..9");
+	puzzle.load("9..241....5.69.231.2..5..9..9.7..32...29356.7.7...29...69.2..7351..79.622.7.86..9");
 
 	puzzle.updateCandidates();
 	
-	new HumanLikeSolver().processYWing(puzzle);
+	for (SolverStep step : new YWingProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	Set<Integer> candidates = puzzle.getCell(2, 7).getCandidates();
 	assertTrue(candidates.contains(3));
@@ -35,7 +37,15 @@ public class YWingProcessorTest {
 	assertTrue(candidates.contains(7));
 	assertEquals(5, candidates.size());
 
-	new HumanLikeSolver().processYWing(puzzle);
+	System.out.println("@@@@");
+	System.out.println(puzzle.getCell(5, 1).getCandidates());
+	System.out.println(puzzle.getCell(0, 1).getCandidates());
+	System.out.println(puzzle.getCell(5, 3).getCandidates());
+	System.out.println("@@@@");
+
+	for (SolverStep step : new YWingProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 	
 	candidates = puzzle.getCell(0, 3).getCandidates();
 	System.out.println(candidates);

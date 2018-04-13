@@ -9,8 +9,8 @@ import sudoku.util.SolverHelper;
 import sudoku.*;
 import static sudoku.Strategy.hiddenSet;
 
-public class HiddenSetProcessor {
-    public List<SolverStep> process(Puzzle puzzle) {
+public class HiddenSetProcessor implements IStrategySolver {
+    public List<SolverStep> solve(Puzzle puzzle) {
 	List<SolverStep> steps = new ArrayList<>();
 	
 	// Looks for hidden sets in rows

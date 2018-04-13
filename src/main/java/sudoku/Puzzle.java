@@ -56,7 +56,7 @@ public class Puzzle implements Cloneable {
 	    for (int x = 0; x < Puzzle.SIDE_LENGTH; ++x) {
 		Cell cell = getCell(x, y);
 		cell.getCandidates().clear();
-		    
+
 		for (int candidate : findCandidates(x, y)) {
 		    cell.addToCandidates(candidate);
 		}

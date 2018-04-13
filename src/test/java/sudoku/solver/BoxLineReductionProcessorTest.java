@@ -58,8 +58,10 @@ public class BoxLineReductionProcessorTest {
 	puzzle.setValue(6, 8, 5);
 	puzzle.setValue(7, 8, 1);
 	puzzle.updateCandidates();
-	
-	new HumanLikeSolver().processBoxLineReduction(puzzle);
+
+	for (SolverStep step : new BoxLineReductionProcessor().solve(puzzle)) {
+	    step.apply();
+	}
 
 	// Asserts candidates 2 are removed from square (1, 0)
 	Set<Integer> candidates = puzzle.getCell(4, 1).getCandidates();

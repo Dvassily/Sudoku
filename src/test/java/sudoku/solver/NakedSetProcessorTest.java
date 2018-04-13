@@ -116,8 +116,10 @@ public class NakedSetProcessorTest {
 
 	// TODO: [4, 8]
 
-	new HumanLikeSolver().processNakedSets(puzzle);
-
+	for (SolverStep step : new NakedSetProcessor().solve(puzzle)) {
+	    step.apply();
+	}
+	
 	// Asserts candidates 1 and 6 are removed from cells [3,0], [4,0], [5, 0] and [0, 2],
 	//                and 7 and 6 from cell [0, 2]
 	
